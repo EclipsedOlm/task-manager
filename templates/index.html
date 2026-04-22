@@ -1,13 +1,530 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
   <head>
-    <title>Task Manager</title> <!-- Tab title -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> <!-- CSS file -->
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}"> <!-- Tab icon -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
 
   <body>
-    <p>panadol code here please im begging you if not im taking away your primogems</p>
+    <div class="page">
+      <header class="topbar">
+        <div>
+          <h1>Task Manager</h1>
+          <p class="subtitle">Simple frontend placeholder for your Flask group project</p>
+        </div>
+        <div class="topbar-badge">Frontend Demo</div>
+      </header>
+
+      <main class="layout">
+        <section class="panel form-panel">
+          <h2 id="formHeading">Add New Task</h2>
+
+          <form id="taskForm" class="task-form">
+            <div class="form-group">
+              <label for="title">Task Title</label>
+              <input type="text" id="title" placeholder="e.g. Design homepage layout" required>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea id="description" rows="4" placeholder="Enter task description..." required></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="assignedTo">Assigned Member</label>
+                <select id="assignedTo" required>
+                  <option value="">Select member</option>
+                  <option value="James">James</option>
+                  <option value="Boaz">Boaz</option>
+                  <option value="Kai Qin">Kai Qin</option>
+                  <option value="Yinchen">Yinchen</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="createdBy">Created By</label>
+                <select id="createdBy" required>
+                  <option value="">Select creator</option>
+                  <option value="James">James</option>
+                  <option value="Boaz">Boaz</option>
+                  <option value="Kai Qin">Kai Qin</option>
+                  <option value="Yinchen">Yinchen</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" required>
+                  <option value="Not Started">Not Started</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="priority">Priority</label>
+                <select id="priority">
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="imageUrl">Task Icon from Web (optional)</label>
+              <input
+                type="url"
+                id="imageUrl"
+                placeholder="Paste direct image URL here"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="imageFile">Upload Custom Task Icon (optional)</label>
+              <input
+                type="file"
+                id="imageFile"
+                accept="image/*"
+              >
+              <p class="input-note">If both a URL and upload are provided, the uploaded file will be used.</p>
+            </div>
+
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="removeImage">
+                Remove current image
+              </label>
+            </div>
+
+            <div id="imagePreviewBox" class="image-preview-box" style="display: none;">
+              <p class="preview-label">Current icon preview</p>
+              <img id="imagePreview" class="image-preview" src="" alt="Task icon preview">
+            </div>
+
+            <div class="form-buttons">
+              <button type="submit" class="btn-primary" id="submitBtn">Add Task</button>
+              <button type="button" class="btn-secondary" id="cancelEditBtn" style="display: none;">
+                Cancel Edit
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel tasks-panel">
+          <div class="tasks-header">
+            <div>
+              <h2>All Tasks</h2>
+              <p class="muted">View, search, filter, edit, and delete tasks</p>
+            </div>
+            <div class="task-count" id="taskCount">0 tasks</div>
+          </div>
+
+          <div class="filters">
+            <div class="form-group">
+              <label for="memberFilter">Filter by Assigned Member</label>
+              <select id="memberFilter">
+                <option value="All">All Members</option>
+                <option value="James">James</option>
+                <option value="Boaz">Boaz</option>
+                <option value="Kai Qin">Kai Qin</option>
+                <option value="Yinchen">Yinchen</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="statusFilter">Filter by Status</label>
+              <select id="statusFilter">
+                <option value="All">All Statuses</option>
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="searchInput">Search by Keyword</label>
+              <input type="text" id="searchInput" placeholder="Search title or description">
+            </div>
+          </div>
+
+          <div id="taskList" class="task-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const taskForm = document.getElementById("taskForm");
+      const taskList = document.getElementById("taskList");
+      const memberFilter = document.getElementById("memberFilter");
+      const statusFilter = document.getElementById("statusFilter");
+      const searchInput = document.getElementById("searchInput");
+      const submitBtn = document.getElementById("submitBtn");
+      const cancelEditBtn = document.getElementById("cancelEditBtn");
+      const formHeading = document.getElementById("formHeading");
+      const taskCount = document.getElementById("taskCount");
+
+      const imageUrlInput = document.getElementById("imageUrl");
+      const imageFileInput = document.getElementById("imageFile");
+      const removeImageCheckbox = document.getElementById("removeImage");
+      const imagePreviewBox = document.getElementById("imagePreviewBox");
+      const imagePreview = document.getElementById("imagePreview");
+
+      let editingTaskId = null;
+      let filePreviewData = "";
+      let editingOriginalImage = "";
+
+      let tasks = [
+        {
+          id: 1,
+          title: "Create login page",
+          description: "Build the basic login page layout and input fields.",
+          assignedTo: "James",
+          createdBy: "Boaz",
+          status: "Not Started",
+          priority: "High",
+          image: ""
+        },
+        {
+          id: 2,
+          title: "DATABASE PLSSS",
+          description: "FAHH",
+          assignedTo: "James",
+          createdBy: "Boaz",
+          status: "In Progress",
+          priority: "Medium",
+          image: ""
+        },
+        {
+          id: 3,
+          title: "Drink from flask",
+          description: "Hydration is imp",
+          assignedTo: "Boaz",
+          createdBy: "Kai Qin",
+          status: "Completed",
+          priority: "Low",
+          image: ""
+        }
+      ];
+
+      function getStatusClass(status) {
+        if (status === "Completed") return "status-completed";
+        if (status === "In Progress") return "status-progress";
+        return "status-not-started";
+      }
+
+      function getPriorityClass(priority) {
+        if (priority === "High") return "priority-high";
+        if (priority === "Medium") return "priority-medium";
+        return "priority-low";
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function getTaskIconMarkup(task) {
+        if (task.image) {
+          return `<img class="task-icon" src="${task.image}" alt="${escapeHtml(task.title)} icon">`;
+        }
+
+        const firstLetter = task.title ? task.title.charAt(0).toUpperCase() : "?";
+        return `<div class="task-icon task-icon-fallback">${escapeHtml(firstLetter)}</div>`;
+      }
+
+      function showPreview(src) {
+        if (src) {
+          imagePreview.src = src;
+          imagePreviewBox.style.display = "block";
+        } else {
+          imagePreview.src = "";
+          imagePreviewBox.style.display = "none";
+        }
+      }
+
+      function updateImagePreview() {
+        const imageUrl = imageUrlInput.value.trim();
+
+        if (removeImageCheckbox.checked) {
+          showPreview("");
+          return;
+        }
+
+        if (filePreviewData) {
+          showPreview(filePreviewData);
+          return;
+        }
+
+        if (imageUrl) {
+          showPreview(imageUrl);
+          return;
+        }
+
+        if (editingTaskId !== null && editingOriginalImage) {
+          showPreview(editingOriginalImage);
+          return;
+        }
+
+        showPreview("");
+      }
+
+      function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function renderTasks() {
+        const selectedMember = memberFilter.value;
+        const selectedStatus = statusFilter.value;
+        const keyword = searchInput.value.toLowerCase().trim();
+
+        const filteredTasks = tasks.filter(task => {
+          const matchesMember =
+            selectedMember === "All" || task.assignedTo === selectedMember;
+
+          const matchesStatus =
+            selectedStatus === "All" || task.status === selectedStatus;
+
+          const matchesKeyword =
+            task.title.toLowerCase().includes(keyword) ||
+            task.description.toLowerCase().includes(keyword);
+
+          return matchesMember && matchesStatus && matchesKeyword;
+        });
+
+        taskCount.textContent = `${filteredTasks.length} task${filteredTasks.length !== 1 ? "s" : ""}`;
+
+        if (filteredTasks.length === 0) {
+          taskList.innerHTML = `
+            <div class="empty-state">
+              <h3>No tasks found</h3>
+              <p>Try changing your filters or adding a new task.</p>
+            </div>
+          `;
+          return;
+        }
+
+        taskList.innerHTML = filteredTasks.map(task => `
+          <article class="task-card">
+            <div class="task-card-top">
+              <div class="task-main-with-icon">
+                ${getTaskIconMarkup(task)}
+                <div class="task-main">
+                  <h3>${escapeHtml(task.title)}</h3>
+                  <p class="task-desc">${escapeHtml(task.description)}</p>
+                </div>
+              </div>
+
+              <div class="task-tags">
+                <span class="badge ${getStatusClass(task.status)}">${escapeHtml(task.status)}</span>
+                <span class="badge ${getPriorityClass(task.priority)}">${escapeHtml(task.priority)}</span>
+              </div>
+            </div>
+
+            <div class="task-meta">
+              <span><strong>Assigned to:</strong> ${escapeHtml(task.assignedTo)}</span>
+              <span><strong>Created by:</strong> ${escapeHtml(task.createdBy)}</span>
+            </div>
+
+            <div class="task-actions">
+              <div class="status-control">
+                <label for="status-${task.id}"><strong>Update status:</strong></label>
+                <select id="status-${task.id}" onchange="updateTaskStatus(${task.id}, this.value)">
+                  <option value="Not Started" ${task.status === "Not Started" ? "selected" : ""}>Not Started</option>
+                  <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                  <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>Completed</option>
+                </select>
+              </div>
+
+              <div class="action-buttons">
+                <button class="btn-edit" onclick="startEditTask(${task.id})">Edit</button>
+                <button class="btn-delete" onclick="deleteTask(${task.id})">Delete</button>
+              </div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function updateTaskStatus(taskId, newStatus) {
+        tasks = tasks.map(task =>
+          task.id === taskId ? { ...task, status: newStatus } : task
+        );
+        renderTasks();
+      }
+
+      function startEditTask(taskId) {
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        document.getElementById("title").value = task.title;
+        document.getElementById("description").value = task.description;
+        document.getElementById("assignedTo").value = task.assignedTo;
+        document.getElementById("createdBy").value = task.createdBy;
+        document.getElementById("status").value = task.status;
+        document.getElementById("priority").value = task.priority;
+
+        imageUrlInput.value = task.image && !task.image.startsWith("data:") ? task.image : "";
+        imageFileInput.value = "";
+        removeImageCheckbox.checked = false;
+        filePreviewData = "";
+        editingOriginalImage = task.image || "";
+
+        editingTaskId = taskId;
+        submitBtn.textContent = "Save Changes";
+        cancelEditBtn.style.display = "inline-block";
+        formHeading.textContent = "Edit Task";
+
+        updateImagePreview();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function cancelEdit() {
+        editingTaskId = null;
+        editingOriginalImage = "";
+        filePreviewData = "";
+
+        taskForm.reset();
+        document.getElementById("status").value = "Not Started";
+        document.getElementById("priority").value = "Medium";
+        submitBtn.textContent = "Add Task";
+        cancelEditBtn.style.display = "none";
+        formHeading.textContent = "Add New Task";
+
+        showPreview("");
+      }
+
+      function deleteTask(taskId) {
+        const confirmed = confirm("Are you sure you want to delete this task?");
+        if (!confirmed) return;
+
+        tasks = tasks.filter(task => task.id !== taskId);
+
+        if (editingTaskId === taskId) {
+          cancelEdit();
+        }
+
+        renderTasks();
+      }
+
+      async function getTaskImageForSubmit() {
+        const imageUrl = imageUrlInput.value.trim();
+        const uploadedFile = imageFileInput.files[0];
+
+        if (removeImageCheckbox.checked) {
+          return "";
+        }
+
+        if (uploadedFile) {
+          return filePreviewData || await readFileAsDataURL(uploadedFile);
+        }
+
+        if (imageUrl) {
+          return imageUrl;
+        }
+
+        if (editingTaskId !== null) {
+          const existingTask = tasks.find(task => task.id === editingTaskId);
+          return existingTask ? existingTask.image : "";
+        }
+
+        return "";
+      }
+
+      taskForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const title = document.getElementById("title").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const assignedTo = document.getElementById("assignedTo").value;
+        const createdBy = document.getElementById("createdBy").value;
+        const status = document.getElementById("status").value;
+        const priority = document.getElementById("priority").value;
+        const image = await getTaskImageForSubmit();
+
+        if (!title || !description || !assignedTo || !createdBy || !status) {
+          return;
+        }
+
+        if (editingTaskId !== null) {
+          tasks = tasks.map(task =>
+            task.id === editingTaskId
+              ? {
+                  ...task,
+                  title,
+                  description,
+                  assignedTo,
+                  createdBy,
+                  status,
+                  priority,
+                  image
+                }
+              : task
+          );
+
+          cancelEdit();
+        } else {
+          const newTask = {
+            id: Date.now(),
+            title,
+            description,
+            assignedTo,
+            createdBy,
+            status,
+            priority,
+            image
+          };
+
+          tasks.unshift(newTask);
+          taskForm.reset();
+          document.getElementById("status").value = "Not Started";
+          document.getElementById("priority").value = "Medium";
+          filePreviewData = "";
+          showPreview("");
+        }
+
+        renderTasks();
+      });
+
+      imageUrlInput.addEventListener("input", () => {
+        if (imageUrlInput.value.trim()) {
+          filePreviewData = "";
+          imageFileInput.value = "";
+        }
+        updateImagePreview();
+      });
+
+      imageFileInput.addEventListener("change", async () => {
+        const uploadedFile = imageFileInput.files[0];
+
+        if (uploadedFile) {
+          filePreviewData = await readFileAsDataURL(uploadedFile);
+          imageUrlInput.value = "";
+        } else {
+          filePreviewData = "";
+        }
+
+        updateImagePreview();
+      });
+
+      removeImageCheckbox.addEventListener("change", updateImagePreview);
+      cancelEditBtn.addEventListener("click", cancelEdit);
+      memberFilter.addEventListener("change", renderTasks);
+      statusFilter.addEventListener("change", renderTasks);
+      searchInput.addEventListener("input", renderTasks);
+
+      renderTasks();
+    </script>
   </body>
 </html>
