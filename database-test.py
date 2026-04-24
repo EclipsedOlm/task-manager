@@ -12,5 +12,6 @@ cursor = conn.cursor() # The cursor object is the one that executes the SQL code
 
 # testing sql query
 # note that psycopg2 has slightly diff syntax
-cursor.execute("SELECT * FROM test")
-print(cursor.fetchall())
+cursor.execute('INSERT INTO "Users"(username, admin) VALUES (%s,%s)', ("Aqua", True))
+conn.commit()
+print("OK")
