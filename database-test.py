@@ -56,7 +56,7 @@ def insertGroup(group_name: str, group_desc: str):
         return "success"
     else:
         # There is a group with the same name!
-        return "Name Conflict"
+        return "name_conflict"
     
 
 def addUserToGroup(username, group_name):
