@@ -1,9 +1,23 @@
 <nav>
-    <h1><a style="font-size: 20px">furina's</a> Task Manager</h1>
+    <div class="nav-left">
+        <img 
+            src="{{ url_for('static', filename='images/site_logo.png') }}" 
+            alt="Site Logo" 
+            class="nav-logo"
+        >
+        <div class="nav-title">
+            <h1>
+                <a class="small-title">Furina's</a>
+                Task Manager
+            </h1>
+            <p class="nav-subtitle">A grand performance of productivity</p>
+        </div>
+    </div>
+
     <ul class="navlinks">
-        <!--idk exactly what features were making but can link to the pages when done-->
-        <li><a>Tasks</a></li>
-        <li><a>Groups</a></li>
-        <li><a>Login</a></li> <!--someone please make this show the logged in user, i cant do flask lol-->
+        <li><a href="/">Tasks</a></li>
+        <li><a href="#">Groups</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
     </ul>
 </nav>

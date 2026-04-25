@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    {% include 'header.html' %}
+
+    <body>
+        {% include 'nav.html' %}
+
+        <main class="auth-page">
+            <section class="auth-wrapper">
+                <div class="auth-card">
+                    <img 
+                        src="{{ url_for('static', filename='images/furina_hat.png') }}" 
+                        alt="Furina Hat" 
+                        class="auth-deco auth-hat"
+                    >
+
+                    <img 
+                        src="{{ url_for('static', filename='images/furina_vision.png') }}" 
+                        alt="Furina Vision" 
+                        class="auth-deco auth-vision"
+                    >
+
+                    <div class="auth-title">
+                        <h2>Join the Troupe</h2>
+                        <p>Create an account and prepare for the next act.</p>
+                    </div>
+
+                    <form action="/register" method="POST" class="auth-form">
+                        <label for="username">Username</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Choose your stage name..."
+                            required
+                            oninvalid="this.setCustomValidity('Please tell Lady Furina your name.')"
+                            oninput="this.setCustomValidity('')"
+                        >
+
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Create a password..."
+                            required
+                            oninvalid="this.setCustomValidity('Create a password before joining the performance.')"
+                            oninput="this.setCustomValidity('')"
+                        >
+
+                        <button type="submit" class="primary-btn">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <p class="auth-switch">
+                        Already part of the performance?
+                        <a href="/login">Login here</a>
+                    </p>
+                </div>
+
+                <img 
+                    src="{{ url_for('static', filename='images/furina_chibi.png') }}" 
+                    alt="Cute Furina" 
+                    class="auth-chibi"
+                >
+            </section>
+        </main>
+    </body>
+</html>

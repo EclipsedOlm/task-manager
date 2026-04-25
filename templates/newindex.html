@@ -1,33 +1,107 @@
 <!DOCTYPE html>
 <html>
-    
     {% include 'header.html' %}
 
     <body>
         {% include 'nav.html' %}
-        <div class="container"> <!--main content-->
-            <div>
-                <details>
+
+        <div class="container">
+            <div class="main-panel">
+                <details open>
                     <summary>Create New Task</summary>
-                    <!--form goes here-->
-                    <form>
-                        <label for="taskname">Task Name: </label>
-                        <input type="text" name="taskname">
-                        <br>
-                        <label for="taskdescription">Task Description: </label>
-                        <input type="text" name="taskdescription">
-                        <input type="submit" value="Create">
+
+                    <form action="/add_task" method="POST" class="task-form">
+                        <label>Task Title:</label>
+                        <input type="text" name="title" required>
+
+                        <label>Description:</label>
+                        <textarea name="description" rows="3"></textarea>
+
+                        <label>Assigned To:</label>
+                        <input type="text" name="assigned_to" required>
+
+                        <label>Created By:</label>
+                        <input type="text" name="created_by" required>
+
+                        <label>Priority:</label>
+                        <select name="priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+
+                        <input type="submit" value="Create Task">
                     </form>
                 </details>
-                <h2>Todo:</h2>
-                <!--render the task cards here, uh idk how exactly to do it but maybe i can make a template per task?-->
-                <ul>
-                    <li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li>
-                    <li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li><li>this is a very long list</li>
-                </ul>
-            </div>
-            <div>
 
+                <h2>All Tasks</h2>
+
+                {% if tasks %}
+                    <div class="task-list">
+                        {% for task in tasks %}
+                            <div class="task-card">
+                                <div class="task-card-header">
+                                    <h3>{{ task.title }}</h3>
+                                    <span class="priority {{ task.priority|lower }}">
+                                        {{ task.priority }}
+                                    </span>
+                                </div>
+
+                                <p>{{ task.description }}</p>
+
+                                <p><strong>Assigned to:</strong> {{ task.assigned_to }}</p>
+                                <p><strong>Created by:</strong> {{ task.created_by }}</p>
+                                <p><strong>Status:</strong> {{ task.status }}</p>
+
+                                <form action="/update_status/{{ task.task_id }}" method="POST">
+                                    <select name="status">
+                                        <option value="Not Started" {% if task.status == "Not Started" %}selected{% endif %}>Not Started</option>
+                                        <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                                        <option value="Completed" {% if task.status == "Completed" %}selected{% endif %}>Completed</option>
+                                    </select>
+                                    <input type="submit" value="Update">
+                                </form>
+
+                                <form action="/delete_task/{{ task.task_id }}" method="POST">
+                                    <input type="submit" value="Delete" class="delete-btn">
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No tasks found.</p>
+                {% endif %}
+            </div>
+
+            <div class="side-panel">
+                <h2>Filters</h2>
+
+                <form method="GET" action="/">
+                    <label>Search keyword:</label>
+                    <input type="text" name="keyword" value="{{ keyword }}">
+
+                    <label>Assigned Member:</label>
+                    <select name="member">
+                        <option value="">All Members</option>
+                        {% for member in members %}
+                            <option value="{{ member.assigned_to }}"
+                                {% if selected_member == member.assigned_to %}selected{% endif %}>
+                                {{ member.assigned_to }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Status:</label>
+                    <select name="status">
+                        <option value="">All Statuses</option>
+                        <option value="Not Started" {% if selected_status == "Not Started" %}selected{% endif %}>Not Started</option>
+                        <option value="In Progress" {% if selected_status == "In Progress" %}selected{% endif %}>In Progress</option>
+                        <option value="Completed" {% if selected_status == "Completed" %}selected{% endif %}>Completed</option>
+                    </select>
+
+                    <input type="submit" value="Apply Filters">
+                    <a href="/">Clear Filters</a>
+                </form>
             </div>
         </div>
     </body>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    {% include 'header.html' %}
+
+    <body>
+        {% include 'nav.html' %}
+
+        <main class="auth-page">
+            <section class="auth-wrapper">
+                <div class="auth-card">
+                    <img 
+                        src="{{ url_for('static', filename='images/furina_hat.png') }}" 
+                        alt="Furina Hat" 
+                        class="auth-deco auth-hat"
+                    >
+
+                    <img 
+                        src="{{ url_for('static', filename='images/furina_vision.png') }}" 
+                        alt="Furina Vision" 
+                        class="auth-deco auth-vision"
+                    >
+
+                    <div class="auth-title">
+                        <h2>Welcome to the Stage</h2>
+                        <p>Log in and let the performance begin.</p>
+                    </div>
+
+                    <form action="/login" method="POST" class="auth-form">
+                        <label for="username">Username</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Enter your stage name..."
+                            required
+                            oninvalid="this.setCustomValidity('Lady Furina demands your name!')"
+                            oninput="this.setCustomValidity('')"
+                        >
+
+                        <label for="password">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password..."
+                            required
+                            oninvalid="this.setCustomValidity('The curtain cannot rise without your password.')"
+                            oninput="this.setCustomValidity('')"
+                        >
+
+                        <button type="submit" class="primary-btn">
+                            Enter the Stage
+                        </button>
+                    </form>
+
+                    <p class="auth-switch">
+                        New to the troupe?
+                        <a href="/register">Create an account</a>
+                    </p>
+                </div>
+
+                <img 
+                    src="{{ url_for('static', filename='images/furina_chibi.png') }}" 
+                    alt="Cute Furina" 
+                    class="auth-chibi"
+                >
+            </section>
+        </main>
+    </body>
+</html>

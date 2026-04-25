@@ -1,45 +1,523 @@
 body {
-  width:100%;
+  width: 100%;
   margin: 0;
-  font-family: serif;
-  color:white;
+  font-family: "Nunito", serif;
+  color: white;
   background: #a0a0a0 url("/static/background.webp");
   background-attachment: fixed;
   background-size: cover;
   background-blend-mode: multiply;
 }
 
-h1{
+h1 {
   font-family: "Imperial Script", serif;
   margin: 0;
-  font-size:40px;
+  font-size: 40px;
 }
 
 nav {
-  position: absolute;
-  top: 0px;
+  position: fixed;
+  top: 0;
   width: 100%;
-  margin: 0;
   padding: 20px;
   color: white;
-  background: linear-gradient(180deg, rgba(29, 32, 73, 0.7), 90%, rgba(0,0,0,0));
+  background: linear-gradient(180deg, rgba(29, 32, 73, 0.85), 90%, rgba(0,0,0,0));
+  z-index: 10;
 }
 
 .navlinks {
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   display: flex;
   list-style: none;
   flex-direction: row;
-  li {
-    margin: 10px;
-  }
+}
+
+.navlinks li {
+  margin-right: 20px;
 }
 
 .container {
-    margin: 20px;
-    margin-top: 150px;
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    grid-template-areas: "left right";
+  margin: 20px;
+  margin-top: 150px;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 25px;
+}
+
+.main-panel,
+.side-panel,
+.task-card {
+  background: rgba(10, 20, 40, 0.75);
+  border: 1px solid rgba(180, 220, 255, 0.35);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input,
+textarea,
+select {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+}
+
+input[type="submit"] {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.task-list {
+  display: grid;
+  gap: 15px;
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.priority {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.priority.low {
+  background: rgba(80, 180, 120, 0.8);
+}
+
+.priority.medium {
+  background: rgba(220, 180, 70, 0.8);
+}
+
+.priority.high {
+  background: rgba(220, 80, 80, 0.8);
+}
+
+.delete-btn {
+  margin-top: 8px;
+}
+
+/* ---------- Navbar polish ---------- */
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  margin: 0;
+  padding: 18px 28px;
+  color: white;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 22, 54, 0.95),
+    rgba(12, 34, 72, 0.78),
+    rgba(0, 0, 0, 0)
+  );
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.nav-title h1 {
+  font-family: "Imperial Script", serif;
+  margin: 0;
+  font-size: 42px;
+  color: #f8fbff;
+  text-shadow: 0 0 12px rgba(127, 220, 255, 0.8);
+}
+
+.small-title {
+  font-size: 24px;
+  color: #f5d98b;
+  text-decoration: none;
+}
+
+.nav-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #d8f5ff;
+  letter-spacing: 1px;
+}
+
+.navlinks {
+  margin: 8px 0 0 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.navlinks li {
+  margin: 0;
+}
+
+.navlinks a {
+  color: #f8fbff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.navlinks a:hover {
+  color: #f5d98b;
+  text-shadow: 0 0 10px rgba(245, 217, 139, 0.8);
+}
+
+
+/* ---------- Login / Register page ---------- */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 420px;
+  padding: 36px;
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(8, 25, 45, 0.92),
+    rgba(14, 48, 84, 0.82)
+  );
+  border: 1px solid rgba(245, 217, 139, 0.45);
+  box-shadow:
+    0 0 30px rgba(127, 220, 255, 0.22),
+    inset 0 0 25px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-title h2 {
+  margin: 0;
+  font-size: 34px;
+  color: #f5d98b;
+  text-shadow: 0 0 14px rgba(245, 217, 139, 0.55);
+}
+
+.auth-title p {
+  margin-top: 8px;
+  color: #d8f5ff;
+  font-size: 15px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form label {
+  color: #f8fbff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.auth-form input {
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(127, 220, 255, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+  color: #071827;
+  font-size: 14px;
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: #f5d98b;
+  box-shadow: 0 0 12px rgba(245, 217, 139, 0.45);
+}
+
+.primary-btn {
+  margin-top: 14px;
+  padding: 13px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5d98b, #7fdcff);
+  color: #071827;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(127, 220, 255, 0.65);
+}
+
+.auth-switch {
+  margin-top: 24px;
+  text-align: center;
+  color: #d8f5ff;
+}
+
+.auth-switch a {
+  color: #f5d98b;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Extra Furina Theme Polish ---------- */
+
+/* Optional cleaner readable font for forms/buttons */
+.auth-card,
+.auth-form input,
+.auth-form button,
+.auth-switch,
+.navlinks a {
+  font-family: "Trebuchet MS", "Nunito", sans-serif;
+}
+
+/* Navbar logo */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-logo {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(127, 220, 255, 0.55));
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.nav-logo:hover {
+  transform: scale(1.1) rotate(-5deg);
+  filter: drop-shadow(0 0 18px rgba(245, 217, 139, 0.75));
+}
+
+/* navbar title */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Wrapper so the Furina can sit outside the card */
+.auth-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* interaction for the whole login card */
+.auth-card {
+  position: relative;
+  overflow: visible;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 8px 32px rgba(127, 220, 255, 0.28),
+    0 0 24px rgba(245, 217, 139, 0.18),
+    inset 0 0 25px rgba(255, 255, 255, 0.05);
+}
+
+/* FURINAA */
+.auth-deco {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
+.auth-hat {
+  width: 200px;
+  top: -68px;
+  left: -78px;
+  transform: rotate(-13deg);
+  animation: floatHat 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(127, 220, 255, 0.4));
+}
+
+.auth-vision {
+  width: 78px;
+  top:20px;
+  right: 6px;
+  animation: pulseVision 2.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px rgba(127, 220, 255, 0.45));
+}
+
+.auth-chibi {
+  position: absolute;
+  width: 220px;
+  right: -130px;
+  bottom: -34px;
+  animation: floatChibi 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(127, 220, 255, 0.28));
+  transition: transform 0.25s ease;
+}
+
+.auth-chibi:hover {
+  transform: scale(1.05) rotate(2deg);
+}
+
+/* interactive input effects */
+.auth-form input {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.auth-form input:hover {
+  transform: translateY(-1px);
+  border-color: rgba(127, 220, 255, 0.75);
+}
+
+.auth-form input:focus {
+  transform: translateY(-2px) scale(1.01);
+  border-color: #f5d98b;
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(127, 220, 255, 0.18),
+    0 0 16px rgba(245, 217, 139, 0.32);
+}
+
+/* button click/hover */
+.primary-btn {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 0 20px rgba(127, 220, 255, 0.7);
+  filter: brightness(1.05);
+}
+
+.primary-btn:active {
+  transform: scale(0.97);
+}
+
+/* Better link hover */
+.auth-switch a {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.auth-switch a:hover {
+  color: #fff0bd;
+  text-shadow: 0 0 8px rgba(245, 217, 139, 0.65);
+}
+
+/* Small page entrance animation */
+.auth-card {
+  animation: fadeInUp 0.65s ease both;
+}
+
+/* Animations */
+
+@keyframes floatHat {
+  0%, 100% {
+    transform: rotate(-13deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-9deg) translateY(-8px);
+  }
+}
+
+@keyframes pulseVision {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+@keyframes floatChibi {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive fixes */
+@media (max-width: 900px) {
+  .auth-chibi {
+    width: 135px;
+    right: -35px;
+    bottom: -45px;
+  }
+}
+
+@media (max-width: 650px) {
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .auth-hat {
+    width: 82px;
+    top: -32px;
+    left: -12px;
+  }
+
+  .auth-vision {
+    width: 54px;
+    top: 16px;
+    right: 14px;
+  }
+
+  .auth-chibi {
+    width: 105px;
+    right: -8px;
+    bottom: -55px;
+  }
 }
