@@ -11,7 +11,7 @@ def index():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
 
-    return render_template("newindex.html") # index.html is default naming convention for the landing page
+    return render_template("newindex.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -47,6 +47,5 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# Run the app
 if __name__ == "__main__":
   app.run(port=5000)

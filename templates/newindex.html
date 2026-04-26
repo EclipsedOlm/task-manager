@@ -5,103 +5,658 @@
     <body>
         {% include 'nav.html' %}
 
-        <div class="container">
-            <div class="main-panel">
-                <details open>
-                    <summary>Create New Task</summary>
+        <!-- Main tab controls -->
+        <input type="radio" name="main-tab" id="tab-performances" class="app-tab-radio" checked>
+        <input type="radio" name="main-tab" id="tab-troupes" class="app-tab-radio">
+        <input type="radio" name="main-tab" id="tab-tea" class="app-tab-radio">
 
-                    <form action="/add_task" method="POST" class="task-form">
-                        <label>Task Title:</label>
-                        <input type="text" name="title" required>
+        <!-- Popup controls -->
+        <input type="checkbox" id="filter-toggle" class="modal-toggle">
+        <input type="checkbox" id="add-performance-toggle" class="modal-toggle">
+        <input type="checkbox" id="task-detail-toggle" class="modal-toggle">
+        <input type="checkbox" id="create-troupe-toggle" class="modal-toggle">
+        <input type="checkbox" id="join-troupe-toggle" class="modal-toggle">
+        <input type="checkbox" id="troupe-detail-toggle" class="modal-toggle">
+        <input type="checkbox" id="task-icon-picker-toggle" class="modal-toggle">
+        <input type="checkbox" id="group-icon-picker-toggle" class="modal-toggle">
 
-                        <label>Description:</label>
-                        <textarea name="description" rows="3"></textarea>
+        <main class="dashboard-shell">
+            <!-- Left side / main app area -->
+            <section class="dashboard-main">
+                <div class="theatre-tabs">
+                    <label for="tab-performances" class="theatre-tab">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
+                            alt="Performances"
+                            class="tab-icon-img"
+                        >
+                        <span>Performances</span>
+                    </label>
 
-                        <label>Assigned To:</label>
-                        <input type="text" name="assigned_to" required>
+                    <label for="tab-troupes" class="theatre-tab">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_directing.png') }}"
+                            alt="Troupes"
+                            class="tab-icon-img"
+                        >
+                        <span>Troupes</span>
+                    </label>
 
-                        <label>Created By:</label>
-                        <input type="text" name="created_by" required>
+                    <label for="tab-tea" class="theatre-tab">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_teatime.png') }}"
+                            alt="Tea Time"
+                            class="tab-icon-img"
+                        >
+                        <span>Tea Time</span>
+                    </label>
+                </div>
 
-                        <label>Priority:</label>
-                        <select name="priority">
-                            <option value="Low">Low</option>
-                            <option value="Medium" selected>Medium</option>
-                            <option value="High">High</option>
+                <!-- Performances tab -->
+                <section class="tab-panel performances-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Act I</p>
+                            <h2>Performances</h2>
+                            <p class="panel-subtitle">
+                                All tasks from every troupe you are part of.
+                            </p>
+                        </div>
+
+                        <div class="panel-actions">
+                            <label for="filter-toggle" class="cute-btn secondary-btn">
+                                Filter
+                            </label>
+
+                            <label for="add-performance-toggle" class="cute-btn primary-action-btn">
+                                + Add Performance
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="todo-row">
+                        <label class="pretty-checkbox">
+                            <input type="checkbox">
+                            <span></span>
+                            To-do only
+                        </label>
+                    </div>
+
+                    <div class="scroll-frame performance-scroll">
+                        <!--
+                            Later, replace these static cards with a Jinja loop:
+                            {% for task in tasks %}
+                            ...
+                            {% endfor %}
+                        -->
+
+                        <label for="task-detail-toggle" class="performance-card high-priority-card">
+                            <div class="task-icon">🎼</div>
+
+                            <div class="task-main-info">
+                                <h3>Prepare Fontaine Presentation</h3>
+                                <p>Assigned to: <strong>Yinchen</strong></p>
+                            </div>
+
+                            <div class="task-meta">
+                                <span class="pill priority-pill high">High</span>
+                                <span class="deadline-pill">Due: 24 Apr</span>
+                            </div>
+                        </label>
+
+                        <label for="task-detail-toggle" class="performance-card medium-priority-card">
+                            <div class="task-icon">🧁</div>
+
+                            <div class="task-main-info">
+                                <h3>Design Login Page</h3>
+                                <p>Assigned to: <strong>James</strong></p>
+                            </div>
+
+                            <div class="task-meta">
+                                <span class="pill priority-pill medium">Medium</span>
+                                <span class="deadline-pill">Due: 27 Apr</span>
+                            </div>
+                        </label>
+
+                        <label for="task-detail-toggle" class="performance-card low-priority-card">
+                            <div class="task-icon">💧</div>
+
+                            <div class="task-main-info">
+                                <h3>Polish Group Interface</h3>
+                                <p>Assigned to: <strong>Kai Qin</strong></p>
+                            </div>
+
+                            <div class="task-meta">
+                                <span class="pill priority-pill low">Low</span>
+                                <span class="deadline-pill">Due: 30 Apr</span>
+                            </div>
+                        </label>
+
+                        <!-- Empty state version for later -->
+                        <!--
+                        <div class="empty-state">
+                            <div class="empty-icon">🍰</div>
+                            <h3>No performances at the moment</h3>
+                            <p>Grab a cake and relax~</p>
+                        </div>
+                        -->
+                    </div>
+                </section>
+
+                <!-- Troupes tab -->
+                <section class="tab-panel troupes-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Act II</p>
+                            <h2>Troupes</h2>
+                            <p class="panel-subtitle">
+                                Create, join, and manage your performing groups.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="scroll-frame troupe-scroll">
+                        <!--
+                            Later, replace these cards with actual groups from database.
+                        -->
+
+                        <label for="troupe-detail-toggle" class="troupe-card">
+                            <div class="troupe-icon">🎩</div>
+                            <h3>Fontaine Dev Team</h3>
+                            <p>4 performers</p>
+                        </label>
+
+                        <label for="troupe-detail-toggle" class="troupe-card">
+                            <div class="troupe-icon">💎</div>
+                            <h3>Hydro Planning Crew</h3>
+                            <p>3 performers</p>
+                        </label>
+
+                        <label for="troupe-detail-toggle" class="troupe-card">
+                            <div class="troupe-icon">🫖</div>
+                            <h3>Tea Time Committee</h3>
+                            <p>5 performers</p>
+                        </label>
+
+                        <!-- Empty state version for later -->
+                        <!--
+                        <div class="empty-state">
+                            <div class="empty-icon">🎭</div>
+                            <h3>You aren't part of any troupe yet!</h3>
+                            <p>Create or join one to start performing!</p>
+                        </div>
+                        -->
+                    </div>
+
+                    <div class="bottom-actions">
+                        <label for="create-troupe-toggle" class="cute-btn primary-action-btn">
+                            + Create Troupe
+                        </label>
+
+                        <label for="join-troupe-toggle" class="cute-btn secondary-btn">
+                            Join Troupe
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Tea Time tab -->
+                <section class="tab-panel tea-panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Intermission</p>
+                            <h2>Tea Time</h2>
+                            <p class="panel-subtitle">
+                                A simple global chat for everyone in the opera house.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="chat-box">
+                        <div class="chat-messages">
+                            <div class="chat-message other-message">
+                                <div class="chat-avatar">F</div>
+                                <div>
+                                    <p class="chat-name">Furina</p>
+                                    <p class="chat-bubble">Welcome, my loyal performers! The stage awaits~</p>
+                                </div>
+                            </div>
+
+                            <div class="chat-message my-message">
+                                <div>
+                                    <p class="chat-name">You</p>
+                                    <p class="chat-bubble">I am ready for today’s tasks!</p>
+                                </div>
+                                <div class="chat-avatar">Y</div>
+                            </div>
+
+                            <div class="chat-message other-message">
+                                <div class="chat-avatar">N</div>
+                                <div>
+                                    <p class="chat-name">Neuvillette</p>
+                                    <p class="chat-bubble">Please remember to update your task status.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form class="chat-input-row">
+                            <input type="text" placeholder="Send a message to the theatre...">
+                            <button type="button">Send</button>
+                        </form>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Right side Furina viewport -->
+            <aside class="furina-sidebar">
+                <section class="furina-viewport">
+                    <div class="furina-placeholder">
+                        <div class="furina-placeholder-icon">✨</div>
+                        <h2>Furina Viewport</h2>
+                        <p>Animation placeholder</p>
+                        <p class="furina-line">
+                            “The audience is watching. Let us make this performance magnificent!”
+                        </p>
+                    </div>
+                </section>
+
+                <section class="filter-panel">
+                    <div class="filter-header">
+                        <h3>Stage Filters</h3>
+                        <label for="filter-toggle" class="close-small">×</label>
+                    </div>
+
+                    <form class="filter-form">
+                        <label>Search script</label>
+                        <input type="text" placeholder="Keyword...">
+
+                        <label>Assigned performer</label>
+                        <select>
+                            <option>All Members</option>
+                            <option>James</option>
+                            <option>Boaz</option>
+                            <option>Kai Qin</option>
+                            <option>Yinchen</option>
                         </select>
 
-                        <input type="submit" value="Create Task">
+                        <label>Status</label>
+                        <select>
+                            <option>All Statuses</option>
+                            <option>Not Started</option>
+                            <option>In Progress</option>
+                            <option>Completed</option>
+                        </select>
+
+                        <label>Priority</label>
+                        <select>
+                            <option>All Priorities</option>
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                        </select>
+
+                        <label>Sort by deadline</label>
+                        <select>
+                            <option>Earliest first</option>
+                            <option>Latest first</option>
+                        </select>
+
+                        <button type="button" class="cute-btn primary-action-btn">
+                            Apply Filters
+                        </button>
                     </form>
-                </details>
+                </section>
+            </aside>
+        </main>
 
-                <h2>All Tasks</h2>
+        <!-- Task detail popup -->
+        <div class="modal-overlay task-detail-modal">
+            <div class="modal-card">
+                <label for="task-detail-toggle" class="modal-close">×</label>
 
-                {% if tasks %}
-                    <div class="task-list">
-                        {% for task in tasks %}
-                            <div class="task-card">
-                                <div class="task-card-header">
-                                    <h3>{{ task.title }}</h3>
-                                    <span class="priority {{ task.priority|lower }}">
-                                        {{ task.priority }}
-                                    </span>
-                                </div>
-
-                                <p>{{ task.description }}</p>
-
-                                <p><strong>Assigned to:</strong> {{ task.assigned_to }}</p>
-                                <p><strong>Created by:</strong> {{ task.created_by }}</p>
-                                <p><strong>Status:</strong> {{ task.status }}</p>
-
-                                <form action="/update_status/{{ task.task_id }}" method="POST">
-                                    <select name="status">
-                                        <option value="Not Started" {% if task.status == "Not Started" %}selected{% endif %}>Not Started</option>
-                                        <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
-                                        <option value="Completed" {% if task.status == "Completed" %}selected{% endif %}>Completed</option>
-                                    </select>
-                                    <input type="submit" value="Update">
-                                </form>
-
-                                <form action="/delete_task/{{ task.task_id }}" method="POST">
-                                    <input type="submit" value="Delete" class="delete-btn">
-                                </form>
-                            </div>
-                        {% endfor %}
+                <div class="modal-title-row">
+                    <div class="modal-icon">🎼</div>
+                    <div>
+                        <p class="eyebrow">Performance Details</p>
+                        <h2>Prepare Fontaine Presentation</h2>
                     </div>
-                {% else %}
-                    <p>No tasks found.</p>
-                {% endif %}
+                </div>
+
+                <p class="modal-description">
+                    Prepare slides and speaking points for the task manager showcase.
+                </p>
+
+                <div class="detail-grid">
+                    <div>
+                        <span>Assigned Member</span>
+                        <strong>Yinchen</strong>
+                    </div>
+
+                    <div>
+                        <span>Created By</span>
+                        <strong>Boaz</strong>
+                    </div>
+
+                    <div>
+                        <span>Status</span>
+                        <strong>In Progress</strong>
+                    </div>
+
+                    <div>
+                        <span>Priority</span>
+                        <strong>High</strong>
+                    </div>
+
+                    <div>
+                        <span>Deadline</span>
+                        <strong>24 Apr</strong>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="cute-btn secondary-btn">Edit Performance</button>
+                    <button type="button" class="cute-btn danger-btn">Delete</button>
+                </div>
             </div>
+        </div>
 
-            <div class="side-panel">
-                <h2>Filters</h2>
+        <!-- Add performance popup -->
+        <div class="modal-overlay add-performance-modal">
+            <div class="modal-card">
+                <label for="add-performance-toggle" class="modal-close">×</label>
 
-                <form method="GET" action="/">
-                    <label>Search keyword:</label>
-                    <input type="text" name="keyword" value="{{ keyword }}">
+                <p class="eyebrow">New Act</p>
+                <h2>Add Performance</h2>
 
-                    <label>Assigned Member:</label>
-                    <select name="member">
-                        <option value="">All Members</option>
-                        {% for member in members %}
-                            <option value="{{ member.assigned_to }}"
-                                {% if selected_member == member.assigned_to %}selected{% endif %}>
-                                {{ member.assigned_to }}
-                            </option>
-                        {% endfor %}
+                <form class="pretty-form">
+                    <label>Icon</label>
+                    <div class="icon-select-preview">
+                        <div class="chosen-icon-preview">🎼</div>
+                        <div>
+                            <p>Choose a performance icon</p>
+                            <label for="task-icon-picker-toggle" class="mini-link-btn">
+                                Open Icon Gallery
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Later, use JavaScript to update this preview and submit the selected icon. -->
+
+                    <label>Troupe</label>
+                    <select name="group_name">
+                        <option value="" selected disabled>Select a troupe...</option>
+                        <option value="Fontaine Dev Team">Fontaine Dev Team</option>
+                        <option value="Hydro Planning Crew">Hydro Planning Crew</option>
+                        <option value="Tea Time Committee">Tea Time Committee</option>
+                    </select>
+                    <!-- Later, this dropdown should be populated using the groups the user is part of. -->
+
+                    <label>Task Name</label>
+                    <input type="text" placeholder="Name of the performance...">
+
+                    <label>Description</label>
+                    <textarea rows="4" placeholder="What must be done?"></textarea>
+
+                    <label>Assigned Member</label>
+                    <select name="assigned_member">
+                        <option value="" selected disabled>Select a performer...</option>
+
+                        <optgroup label="Fontaine Dev Team">
+                            <option value="Yinchen">Yinchen</option>
+                            <option value="James">James</option>
+                            <option value="Boaz">Boaz</option>
+                            <option value="Kai Qin">Kai Qin</option>
+                        </optgroup>
+
+                        <optgroup label="Hydro Planning Crew">
+                            <option value="James">James</option>
+                            <option value="Kai Qin">Kai Qin</option>
+                            <option value="Yinchen">Yinchen</option>
+                        </optgroup>
+
+                        <optgroup label="Tea Time Committee">
+                            <option value="Boaz">Boaz</option>
+                            <option value="James">James</option>
+                            <option value="Kai Qin">Kai Qin</option>
+                        </optgroup>
+                    </select>
+                    <!-- Later, use JavaScript or Flask to show only members from the selected troupe. -->
+
+                    <label>Priority</label>
+                    <select>
+                        <option>Low</option>
+                        <option selected>Medium</option>
+                        <option>High</option>
                     </select>
 
-                    <label>Status:</label>
-                    <select name="status">
-                        <option value="">All Statuses</option>
-                        <option value="Not Started" {% if selected_status == "Not Started" %}selected{% endif %}>Not Started</option>
-                        <option value="In Progress" {% if selected_status == "In Progress" %}selected{% endif %}>In Progress</option>
-                        <option value="Completed" {% if selected_status == "Completed" %}selected{% endif %}>Completed</option>
-                    </select>
+                    <label>Deadline</label>
+                    <input type="date">
 
-                    <input type="submit" value="Apply Filters">
-                    <a href="/">Clear Filters</a>
+                    <button type="button" class="cute-btn primary-action-btn">
+                        Create Performance
+                    </button>
                 </form>
+            </div>
+        </div>
+
+        <!-- Troupe detail popup -->
+        <div class="modal-overlay troupe-detail-modal">
+            <div class="modal-card">
+                <label for="troupe-detail-toggle" class="modal-close">×</label>
+
+                <div class="modal-title-row">
+                    <div class="modal-icon">🎩</div>
+                    <div>
+                        <p class="eyebrow">Troupe Details</p>
+                        <h2>Fontaine Dev Team</h2>
+                    </div>
+                </div>
+
+                <p class="modal-description">
+                    A group for building the grandest task manager in all of Fontaine.
+                </p>
+
+                <div class="members-placeholder">
+                    <h3>Members</h3>
+                    <p>Member profile cards will go here later.</p>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="cute-btn danger-btn">Leave Troupe</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create troupe popup -->
+        <div class="modal-overlay create-troupe-modal">
+            <div class="modal-card">
+                <label for="create-troupe-toggle" class="modal-close">×</label>
+
+                <p class="eyebrow">Gather the Cast</p>
+                <h2>Create Troupe</h2>
+
+                <form class="pretty-form">
+                    <label>Group Icon</label>
+                    <div class="icon-select-preview">
+                        <div class="chosen-icon-preview">🎩</div>
+                        <div>
+                            <p>Choose a troupe icon</p>
+                            <label for="group-icon-picker-toggle" class="mini-link-btn">
+                                Open Icon Gallery
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Later, use JavaScript to update this preview and submit the selected icon. -->
+
+                    <label>Group Name</label>
+                    <input type="text" placeholder="Name your troupe...">
+
+                    <label>Group Description</label>
+                    <textarea rows="4" placeholder="What is this troupe for?"></textarea>
+
+                    <button type="button" class="cute-btn primary-action-btn">
+                        Create Troupe
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Join troupe popup -->
+        <div class="modal-overlay join-troupe-modal">
+            <div class="modal-card wide-modal">
+                <label for="join-troupe-toggle" class="modal-close">×</label>
+
+                <p class="eyebrow">Join the Stage</p>
+                <h2>Join a Troupe</h2>
+
+                <div class="join-troupe-grid">
+                    <div class="join-troupe-card">
+                        <div class="troupe-icon">🎩</div>
+                        <h3>Fontaine Dev Team</h3>
+                        <p>A team for app development.</p>
+                        <button type="button" class="cute-btn primary-action-btn">Join</button>
+                    </div>
+
+                    <div class="join-troupe-card">
+                        <div class="troupe-icon">🧁</div>
+                        <h3>Dessert Planning</h3>
+                        <p>A group for event logistics.</p>
+                        <button type="button" class="cute-btn primary-action-btn">Join</button>
+                    </div>
+
+                    <div class="join-troupe-card">
+                        <div class="troupe-icon">💧</div>
+                        <h3>Hydro Designers</h3>
+                        <p>A group for UI polish.</p>
+                        <button type="button" class="cute-btn primary-action-btn">Join</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance icon picker popup -->
+        <div class="modal-overlay task-icon-picker-modal">
+            <div class="modal-card icon-picker-card">
+                <label for="task-icon-picker-toggle" class="modal-close">×</label>
+
+                <p class="eyebrow">Icon Gallery</p>
+                <h2>Select Performance Icon</h2>
+
+                <p class="modal-description">
+                    Choose a cute icon for this performance. This is only visual for now.
+                </p>
+
+                <div class="icon-picker-grid">
+                    <input type="radio" name="performance_icon" id="perf-icon-music" checked>
+                    <label for="perf-icon-music" class="icon-choice-card">
+                        <div class="icon-choice-symbol">🎼</div>
+                        <span>Music</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon" id="perf-icon-cake">
+                    <label for="perf-icon-cake" class="icon-choice-card">
+                        <div class="icon-choice-symbol">🧁</div>
+                        <span>Cake</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon" id="perf-icon-hydro">
+                    <label for="perf-icon-hydro" class="icon-choice-card">
+                        <div class="icon-choice-symbol">💧</div>
+                        <span>Hydro</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon" id="perf-icon-mask">
+                    <label for="perf-icon-mask" class="icon-choice-card">
+                        <div class="icon-choice-symbol">🎭</div>
+                        <span>Mask</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon" id="perf-icon-crown">
+                    <label for="perf-icon-crown" class="icon-choice-card">
+                        <div class="icon-choice-symbol">👑</div>
+                        <span>Crown</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon" id="perf-icon-star">
+                    <label for="perf-icon-star" class="icon-choice-card">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
+                            alt="Furina Star"
+                        >
+                        <span>Star</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions icon-picker-actions">
+                    <label for="task-icon-picker-toggle" class="cute-btn primary-action-btn">
+                        Done
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group icon picker popup -->
+        <div class="modal-overlay group-icon-picker-modal">
+            <div class="modal-card icon-picker-card">
+                <label for="group-icon-picker-toggle" class="modal-close">×</label>
+
+                <p class="eyebrow">Troupe Emblem</p>
+                <h2>Select Troupe Icon</h2>
+
+                <p class="modal-description">
+                    Choose an emblem for your troupe. This is only visual for now.
+                </p>
+
+                <div class="icon-picker-grid">
+                    <input type="radio" name="group_icon" id="group-icon-hat" checked>
+                    <label for="group-icon-hat" class="icon-choice-card">
+                        <div class="icon-choice-symbol">🎩</div>
+                        <span>Hat</span>
+                    </label>
+
+                    <input type="radio" name="group_icon" id="group-icon-crown">
+                    <label for="group-icon-crown" class="icon-choice-card">
+                        <div class="icon-choice-symbol">👑</div>
+                        <span>Crown</span>
+                    </label>
+
+                    <input type="radio" name="group_icon" id="group-icon-hydro">
+                    <label for="group-icon-hydro" class="icon-choice-card">
+                        <div class="icon-choice-symbol">💧</div>
+                        <span>Hydro</span>
+                    </label>
+
+                    <input type="radio" name="group_icon" id="group-icon-directing">
+                    <label for="group-icon-directing" class="icon-choice-card">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_directing.png') }}"
+                            alt="Furina Directing"
+                        >
+                        <span>Director</span>
+                    </label>
+
+                    <input type="radio" name="group_icon" id="group-icon-tea">
+                    <label for="group-icon-tea" class="icon-choice-card">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_teatime.png') }}"
+                            alt="Furina Tea Time"
+                        >
+                        <span>Tea</span>
+                    </label>
+
+                    <input type="radio" name="group_icon" id="group-icon-star">
+                    <label for="group-icon-star" class="icon-choice-card">
+                        <img
+                            src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
+                            alt="Furina Star"
+                        >
+                        <span>Star</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions icon-picker-actions">
+                    <label for="group-icon-picker-toggle" class="cute-btn primary-action-btn">
+                        Done
+                    </label>
+                </div>
             </div>
         </div>
     </body>
