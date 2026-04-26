@@ -21,7 +21,7 @@
         <input type="checkbox" id="group-icon-picker-toggle" class="modal-toggle">
 
         <main class="dashboard-shell">
-            <!-- Left side / main app area -->
+            <!-- This is the left side (so like anything thats not the viewport ig) -->
             <section class="dashboard-main">
                 <div class="theatre-tabs">
                     <label for="tab-performances" class="theatre-tab">
@@ -52,7 +52,7 @@
                     </label>
                 </div>
 
-                <!-- Performances tab -->
+                <!-- This is the task page/tab/whatever you call it -->
                 <section class="tab-panel performances-panel">
                     <div class="panel-header">
                         <div>
@@ -84,10 +84,8 @@
 
                     <div class="scroll-frame performance-scroll">
                         <!--
-                            Later, replace these static cards with a Jinja loop:
-                            {% for task in tasks %}
-                            ...
-                            {% endfor %}
+                            Might need a loop here or sth to get all the task
+                            below are just some placeholders
                         -->
 
                         <label for="task-detail-toggle" class="performance-card high-priority-card">
@@ -132,7 +130,7 @@
                             </div>
                         </label>
 
-                        <!-- Empty state version for later -->
+                        <!-- If therere no tasks we show this trust -->
                         <!--
                         <div class="empty-state">
                             <div class="empty-icon">🍰</div>
@@ -143,7 +141,7 @@
                     </div>
                 </section>
 
-                <!-- Troupes tab -->
+                <!-- This for the groups -->
                 <section class="tab-panel troupes-panel">
                     <div class="panel-header">
                         <div>
@@ -157,7 +155,7 @@
 
                     <div class="scroll-frame troupe-scroll">
                         <!--
-                            Later, replace these cards with actual groups from database.
+                            Place holders again, we needa get the groups from db here
                         -->
 
                         <label for="troupe-detail-toggle" class="troupe-card">
@@ -178,7 +176,7 @@
                             <p>5 performers</p>
                         </label>
 
-                        <!-- Empty state version for later -->
+                        <!-- Trust bro -->
                         <!--
                         <div class="empty-state">
                             <div class="empty-icon">🎭</div>
@@ -199,7 +197,7 @@
                     </div>
                 </section>
 
-                <!-- Tea Time tab -->
+                <!-- This is the chat (i lowkey have no idea why i added this its kinda funny) -->
                 <section class="tab-panel tea-panel">
                     <div class="panel-header">
                         <div>
@@ -246,7 +244,7 @@
                 </section>
             </section>
 
-            <!-- Right side Furina viewport -->
+            <!-- This for my Furina viewport still wip -->
             <aside class="furina-sidebar">
                 <section class="furina-viewport">
                     <div class="furina-placeholder">
@@ -259,6 +257,7 @@
                     </div>
                 </section>
 
+                <!-- this the filter panel thingy (its hard coded for now) -->
                 <section class="filter-panel">
                     <div class="filter-header">
                         <h3>Stage Filters</h3>
@@ -308,7 +307,7 @@
             </aside>
         </main>
 
-        <!-- Task detail popup -->
+        <!-- Task detail popup (placehodlers)-->
         <div class="modal-overlay task-detail-modal">
             <div class="modal-card">
                 <label for="task-detail-toggle" class="modal-close">×</label>
@@ -378,7 +377,7 @@
                             </label>
                         </div>
                     </div>
-                    <!-- Later, use JavaScript to update this preview and submit the selected icon. -->
+                    <!-- Needa update this preview and submit the selected icon -->
 
                     <label>Troupe</label>
                     <select name="group_name">
@@ -387,7 +386,7 @@
                         <option value="Hydro Planning Crew">Hydro Planning Crew</option>
                         <option value="Tea Time Committee">Tea Time Committee</option>
                     </select>
-                    <!-- Later, this dropdown should be populated using the groups the user is part of. -->
+                    <!-- the dropdown should have the groups the user is part of -->
 
                     <label>Task Name</label>
                     <input type="text" placeholder="Name of the performance...">
@@ -418,7 +417,7 @@
                             <option value="Kai Qin">Kai Qin</option>
                         </optgroup>
                     </select>
-                    <!-- Later, use JavaScript or Flask to show only members from the selected troupe. -->
+                    <!-- need to show only members from the selected troupe -->
 
                     <label>Priority</label>
                     <select>
@@ -484,7 +483,7 @@
                             </label>
                         </div>
                     </div>
-                    <!-- Later, use JavaScript to update this preview and submit the selected icon. -->
+                    <!-- need to update this preview and submit the selected icon same as above -->
 
                     <label>Group Name</label>
                     <input type="text" placeholder="Name your troupe...">
@@ -532,7 +531,7 @@
             </div>
         </div>
 
-        <!-- Performance icon picker popup -->
+        <!-- Performance icon picker popup (This is very imp and necessary without this this html will self destruct (also its lowkey hardcoded))-->
         <div class="modal-overlay task-icon-picker-modal">
             <div class="modal-card icon-picker-card">
                 <label for="task-icon-picker-toggle" class="modal-close">×</label>
@@ -593,7 +592,7 @@
             </div>
         </div>
 
-        <!-- Group icon picker popup -->
+        <!-- Group icon picker popup (hard coded as well) -->
         <div class="modal-overlay group-icon-picker-modal">
             <div class="modal-card icon-picker-card">
                 <label for="group-icon-picker-toggle" class="modal-close">×</label>

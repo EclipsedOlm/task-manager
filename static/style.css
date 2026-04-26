@@ -1,114 +1,47 @@
+:root {
+  --furina-navy: rgba(7, 21, 39, 0.88);
+  --furina-panel: rgba(9, 31, 55, 0.82);
+  --furina-panel-light: rgba(16, 56, 93, 0.82);
+  --furina-gold: #f5d98b;
+  --furina-cyan: #7fdcff;
+  --furina-white: #f8fbff;
+  --furina-muted: #c9e8f5;
+  --furina-danger: #ff8b9a;
+  --furina-dark: #071827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   width: 100%;
   margin: 0;
-  font-family: "Nunito", serif;
-  color: white;
+  font-family: "Nunito", "Trebuchet MS", sans-serif;
+  color: var(--furina-white);
   background: #a0a0a0 url("/static/background.webp");
   background-attachment: fixed;
   background-size: cover;
+  background-position: center;
   background-blend-mode: multiply;
+  overflow-x: hidden;
 }
 
 h1 {
-  font-family: "Imperial Script", serif;
   margin: 0;
+  font-family: "Imperial Script", serif;
   font-size: 40px;
 }
 
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 20px;
-  color: white;
-  background: linear-gradient(180deg, rgba(29, 32, 73, 0.85), 90%, rgba(0,0,0,0));
-  z-index: 10;
-}
-
-.navlinks {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  list-style: none;
-  flex-direction: row;
-}
-
-.navlinks li {
-  margin-right: 20px;
-}
-
-.container {
-  margin: 20px;
-  margin-top: 150px;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 25px;
-}
-
-.main-panel,
-.side-panel,
-.task-card {
-  background: rgba(10, 20, 40, 0.75);
-  border: 1px solid rgba(180, 220, 255, 0.35);
-  border-radius: 15px;
-  padding: 20px;
-  backdrop-filter: blur(6px);
-}
-
-.task-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
+button,
 input,
 textarea,
-select {
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
+select,
+label {
+  font-family: "Nunito", "Trebuchet MS", sans-serif;
 }
 
-input[type="submit"] {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.task-list {
-  display: grid;
-  gap: 15px;
-}
-
-.task-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.priority {
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.priority.low {
-  background: rgba(80, 180, 120, 0.8);
-}
-
-.priority.medium {
-  background: rgba(220, 180, 70, 0.8);
-}
-
-.priority.high {
-  background: rgba(220, 80, 80, 0.8);
-}
-
-.delete-btn {
-  margin-top: 8px;
-}
-
-/* ---------- Navbar polish ---------- */
+/* navbar shenanigans (idk why it took me so long to get it right)*/
 
 nav {
   position: fixed;
@@ -116,7 +49,10 @@ nav {
   width: 100%;
   margin: 0;
   padding: 18px 28px;
-  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  color: var(--furina-white);
   background: linear-gradient(
     180deg,
     rgba(10, 22, 54, 0.95),
@@ -124,173 +60,8 @@ nav {
     rgba(0, 0, 0, 0)
   );
   z-index: 10;
-  box-sizing: border-box;
 }
 
-.nav-title h1 {
-  font-family: "Imperial Script", serif;
-  margin: 0;
-  font-size: 42px;
-  color: #f8fbff;
-  text-shadow: 0 0 12px rgba(127, 220, 255, 0.8);
-}
-
-.small-title {
-  font-size: 24px;
-  color: #f5d98b;
-  text-decoration: none;
-}
-
-.nav-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: #d8f5ff;
-  letter-spacing: 1px;
-}
-
-.navlinks {
-  margin: 8px 0 0 0;
-  padding: 0;
-  display: flex;
-  list-style: none;
-  gap: 20px;
-}
-
-.navlinks li {
-  margin: 0;
-}
-
-.navlinks a {
-  color: #f8fbff;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-.navlinks a:hover {
-  color: #f5d98b;
-  text-shadow: 0 0 10px rgba(245, 217, 139, 0.8);
-}
-
-
-/* ---------- Login / Register page ---------- */
-
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 120px;
-  box-sizing: border-box;
-}
-
-.auth-card {
-  width: 420px;
-  padding: 36px;
-  border-radius: 24px;
-  background: linear-gradient(
-    145deg,
-    rgba(8, 25, 45, 0.92),
-    rgba(14, 48, 84, 0.82)
-  );
-  border: 1px solid rgba(245, 217, 139, 0.45);
-  box-shadow:
-    0 0 30px rgba(127, 220, 255, 0.22),
-    inset 0 0 25px rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(8px);
-}
-
-.auth-title {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.auth-title h2 {
-  margin: 0;
-  font-size: 34px;
-  color: #f5d98b;
-  text-shadow: 0 0 14px rgba(245, 217, 139, 0.55);
-}
-
-.auth-title p {
-  margin-top: 8px;
-  color: #d8f5ff;
-  font-size: 15px;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.auth-form label {
-  color: #f8fbff;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.auth-form input {
-  padding: 13px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(127, 220, 255, 0.35);
-  background: rgba(255, 255, 255, 0.95);
-  color: #071827;
-  font-size: 14px;
-  outline: none;
-}
-
-.auth-form input:focus {
-  border-color: #f5d98b;
-  box-shadow: 0 0 12px rgba(245, 217, 139, 0.45);
-}
-
-.primary-btn {
-  margin-top: 14px;
-  padding: 13px;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #f5d98b, #7fdcff);
-  color: #071827;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 18px rgba(127, 220, 255, 0.65);
-}
-
-.auth-switch {
-  margin-top: 24px;
-  text-align: center;
-  color: #d8f5ff;
-}
-
-.auth-switch a {
-  color: #f5d98b;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.auth-switch a:hover {
-  text-decoration: underline;
-}
-
-/* ---------- Furina stuff ---------- */
-
-/* some font for forms/buttons */
-.auth-card,
-.auth-form input,
-.auth-form button,
-.auth-switch,
-.navlinks a {
-  font-family: "Trebuchet MS", "Nunito", sans-serif;
-}
-
-/* Navbar logo */
 .nav-left {
   display: flex;
   align-items: center;
@@ -310,14 +81,62 @@ nav {
   filter: drop-shadow(0 0 18px rgba(245, 217, 139, 0.75));
 }
 
-/* navbar title */
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.nav-title h1 {
+  margin: 0;
+  font-family: "Imperial Script", serif;
+  font-size: 42px;
+  color: var(--furina-white);
+  text-shadow: 0 0 12px rgba(127, 220, 255, 0.8);
 }
 
-/* Wrapper so the Furina can sit outside the card */
+.small-title {
+  font-size: 24px;
+  color: var(--furina-gold);
+  text-decoration: none;
+}
+
+.nav-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #d8f5ff;
+  letter-spacing: 1px;
+}
+
+.navlinks {
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.navlinks li {
+  margin: 0;
+}
+
+.navlinks a {
+  color: var(--furina-white);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.navlinks a:hover {
+  color: var(--furina-gold);
+  text-shadow: 0 0 10px rgba(245, 217, 139, 0.8);
+}
+
+/* login/register pages */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+}
+
 .auth-wrapper {
   position: relative;
   width: 100%;
@@ -327,10 +146,23 @@ nav {
   align-items: center;
 }
 
-/* interaction for the whole login card */
 .auth-card {
   position: relative;
+  width: 420px;
+  padding: 36px;
   overflow: visible;
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(8, 25, 45, 0.92),
+    rgba(14, 48, 84, 0.82)
+  );
+  border: 1px solid rgba(245, 217, 139, 0.45);
+  box-shadow:
+    0 0 30px rgba(127, 220, 255, 0.22),
+    inset 0 0 25px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  animation: fadeInUp 0.65s ease both;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -342,7 +174,109 @@ nav {
     inset 0 0 25px rgba(255, 255, 255, 0.05);
 }
 
-/* FURINAA */
+.auth-title {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-title h2 {
+  margin: 0;
+  font-size: 34px;
+  color: var(--furina-gold);
+  text-shadow: 0 0 14px rgba(245, 217, 139, 0.55);
+}
+
+.auth-title p {
+  margin-top: 8px;
+  color: #d8f5ff;
+  font-size: 15px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form label {
+  color: var(--furina-white);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.auth-form input {
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(127, 220, 255, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--furina-dark);
+  font-size: 14px;
+  outline: none;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.auth-form input:hover {
+  transform: translateY(-1px);
+  border-color: rgba(127, 220, 255, 0.75);
+}
+
+.auth-form input:focus {
+  transform: translateY(-2px) scale(1.01);
+  border-color: var(--furina-gold);
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(127, 220, 255, 0.18),
+    0 0 16px rgba(245, 217, 139, 0.32);
+}
+
+.primary-btn {
+  margin-top: 14px;
+  padding: 13px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
+  color: var(--furina-dark);
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 0 20px rgba(127, 220, 255, 0.7);
+  filter: brightness(1.05);
+}
+
+.primary-btn:active {
+  transform: scale(0.97);
+}
+
+.auth-switch {
+  margin-top: 24px;
+  text-align: center;
+  color: #d8f5ff;
+}
+
+.auth-switch a {
+  color: var(--furina-gold);
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.auth-switch a:hover {
+  color: #fff0bd;
+  text-shadow: 0 0 8px rgba(245, 217, 139, 0.65);
+}
+
+/* login Furina and prop images (basically the hat and stuff) */
 .auth-deco {
   position: absolute;
   pointer-events: none;
@@ -361,7 +295,7 @@ nav {
 
 .auth-vision {
   width: 78px;
-  top:20px;
+  top: 20px;
   right: 6px;
   animation: pulseVision 2.8s ease-in-out infinite;
   filter: drop-shadow(0 0 16px rgba(127, 220, 255, 0.45));
@@ -381,178 +315,21 @@ nav {
   transform: scale(1.05) rotate(2deg);
 }
 
-/* interactive input effects */
-.auth-form input {
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-}
+/* Dashboard layout (The buttons basically)*/
 
-.auth-form input:hover {
-  transform: translateY(-1px);
-  border-color: rgba(127, 220, 255, 0.75);
-}
-
-.auth-form input:focus {
-  transform: translateY(-2px) scale(1.01);
-  border-color: #f5d98b;
-  background: #ffffff;
-  box-shadow:
-    0 0 0 3px rgba(127, 220, 255, 0.18),
-    0 0 16px rgba(245, 217, 139, 0.32);
-}
-
-/* button click/hover */
-.primary-btn {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
-}
-
-.primary-btn:hover {
-  transform: translateY(-2px) scale(1.015);
-  box-shadow: 0 0 20px rgba(127, 220, 255, 0.7);
-  filter: brightness(1.05);
-}
-
-.primary-btn:active {
-  transform: scale(0.97);
-}
-
-/* Better link hover */
-.auth-switch a {
-  transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.auth-switch a:hover {
-  color: #fff0bd;
-  text-shadow: 0 0 8px rgba(245, 217, 139, 0.65);
-}
-
-/* Small page entrance animation */
-.auth-card {
-  animation: fadeInUp 0.65s ease both;
-}
-
-/* Animations */
-
-@keyframes floatHat {
-  0%, 100% {
-    transform: rotate(-13deg) translateY(0);
-  }
-
-  50% {
-    transform: rotate(-9deg) translateY(-8px);
-  }
-}
-
-@keyframes pulseVision {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-
-  50% {
-    transform: scale(1.07);
-    opacity: 1;
-  }
-}
-
-@keyframes floatChibi {
-  0%, 100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive fixes */
-@media (max-width: 900px) {
-  .auth-chibi {
-    width: 135px;
-    right: -35px;
-    bottom: -45px;
-  }
-}
-
-@media (max-width: 650px) {
-  nav {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .nav-logo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .auth-hat {
-    width: 82px;
-    top: -32px;
-    left: -12px;
-  }
-
-  .auth-vision {
-    width: 54px;
-    top: 16px;
-    right: 14px;
-  }
-
-  .auth-chibi {
-    width: 105px;
-    right: -8px;
-    bottom: -55px;
-  }
-}
-
-/* ========================================================= */
-/*                MAIN DASHBOARD REDESIGN                   */
-/* ========================================================= */
-
-:root {
-  --furina-navy: rgba(7, 21, 39, 0.88);
-  --furina-panel: rgba(9, 31, 55, 0.82);
-  --furina-panel-light: rgba(16, 56, 93, 0.82);
-  --furina-gold: #f5d98b;
-  --furina-cyan: #7fdcff;
-  --furina-white: #f8fbff;
-  --furina-muted: #c9e8f5;
-  --furina-danger: #ff8b9a;
-}
-
-/* Hide radio and checkbox controls */
 .app-tab-radio,
 .modal-toggle {
   display: none;
 }
 
-/* Main layout */
 .dashboard-shell {
   min-height: calc(100vh - 120px);
   margin: 118px 26px 26px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 390px;
-  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) 500px;
+  gap: 24px;
 }
 
-/* Left dashboard section */
 .dashboard-main {
   min-width: 0;
   display: flex;
@@ -560,9 +337,11 @@ nav {
   gap: 16px;
 }
 
-/* Top tab menu */
+/* Dashboard tabs? idk what you call them (ts was so ragebait)*/
+
 .theatre-tabs {
   display: flex;
+  align-items: stretch;
   gap: 12px;
   padding: 10px;
   border-radius: 24px;
@@ -574,13 +353,18 @@ nav {
 
 .theatre-tab {
   flex: 1;
+  min-height: 78px;
   padding: 13px 16px;
   border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
   text-align: center;
   font-weight: 800;
   color: var(--furina-muted);
   cursor: pointer;
-  transition:
+  transition: /*some tuff animation type shi*/
     transform 0.2s ease,
     background 0.2s ease,
     color 0.2s ease,
@@ -588,7 +372,7 @@ nav {
 }
 
 .theatre-tab span {
-  margin-right: 6px;
+  margin-right: 0;
 }
 
 .theatre-tab:hover {
@@ -597,16 +381,42 @@ nav {
   background: rgba(127, 220, 255, 0.12);
 }
 
-/* Active tab styles */
+.tab-icon-img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 8px rgba(127, 220, 255, 0.35))
+    saturate(0.95);
+  transition: transform 0.22s ease, filter 0.22s ease;
+}
+
+.theatre-tab:hover .tab-icon-img {
+  transform: translateY(-3px) rotate(-3deg) scale(1.06);
+  filter:
+    drop-shadow(0 0 14px rgba(245, 217, 139, 0.45))
+    saturate(1.08);
+}
+
 #tab-performances:checked ~ .dashboard-shell label[for="tab-performances"],
 #tab-troupes:checked ~ .dashboard-shell label[for="tab-troupes"],
 #tab-tea:checked ~ .dashboard-shell label[for="tab-tea"] {
-  color: #071827;
+  color: var(--furina-dark);
   background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
   box-shadow: 0 0 16px rgba(127, 220, 255, 0.35);
 }
 
+#tab-performances:checked ~ .dashboard-shell label[for="tab-performances"] .tab-icon-img,
+#tab-troupes:checked ~ .dashboard-shell label[for="tab-troupes"] .tab-icon-img,
+#tab-tea:checked ~ .dashboard-shell label[for="tab-tea"] .tab-icon-img {
+  transform: scale(1.08);
+  filter:
+    drop-shadow(0 0 14px rgba(7, 24, 39, 0.28))
+    saturate(1.12);
+}
+
 /* Tab panels */
+
 .tab-panel {
   display: none;
   min-height: 0;
@@ -632,11 +442,11 @@ nav {
 }
 
 .panel-header {
+  margin-bottom: 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 18px;
-  margin-bottom: 16px;
 }
 
 .eyebrow {
@@ -665,15 +475,21 @@ nav {
 .bottom-actions,
 .modal-actions {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bottom-actions {
+  margin-top: 18px;
 }
 
 /* Buttons */
+
 .cute-btn {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  min-height: 40px;
   padding: 11px 16px;
   border: none;
   border-radius: 999px;
@@ -688,17 +504,18 @@ nav {
     background 0.2s ease;
 }
 
-.cute-btn:hover {
-  transform: translateY(-2px) scale(1.02);
+.cute-btn:hover,
+.modal-card .cute-btn:hover {
+  transform: translateY(-1px) scale(1.01);
 }
 
 .cute-btn:active {
   transform: scale(0.97);
 }
 
-.primary-action-btn {
+.primary-action-btn { /*Use this for inserting and stuff*/
   background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
-  color: #071827;
+  color: var(--furina-dark);
   box-shadow: 0 0 16px rgba(127, 220, 255, 0.22);
 }
 
@@ -717,7 +534,8 @@ nav {
   box-shadow: 0 0 14px rgba(127, 220, 255, 0.2);
 }
 
-.danger-btn {
+.danger-btn { /*Use this for like delete buttons*/
+  margin: 4px 0;
   background: rgba(255, 139, 154, 0.15);
   color: #ffd4da;
   border: 1px solid rgba(255, 139, 154, 0.5);
@@ -728,7 +546,53 @@ nav {
   box-shadow: 0 0 14px rgba(255, 139, 154, 0.25);
 }
 
-/* Checkbox */
+/* Forms and inputs */
+
+.filter-form,
+.pretty-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-form label,
+.pretty-form label {
+  margin-top: 5px;
+  color: var(--furina-muted);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.dashboard-shell input,
+.dashboard-shell textarea,
+.dashboard-shell select,
+.modal-card input,
+.modal-card textarea,
+.modal-card select {
+  padding: 11px 13px;
+  border-radius: 13px;
+  border: 1px solid rgba(127, 220, 255, 0.26);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--furina-dark);
+  outline: none;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.dashboard-shell input:focus,
+.dashboard-shell textarea:focus,
+.dashboard-shell select:focus,
+.modal-card input:focus,
+.modal-card textarea:focus,
+.modal-card select:focus {
+  transform: translateY(-1px);
+  border-color: var(--furina-gold);
+  box-shadow: 0 0 0 3px rgba(127, 220, 255, 0.16);
+}
+
+/* checkbox for filtering your own stuff */
 .todo-row {
   margin: 8px 0 14px;
 }
@@ -766,12 +630,14 @@ nav {
   position: absolute;
   left: 4px;
   top: -2px;
-  color: #071827;
+  color: var(--furina-dark);
   font-weight: 900;
 }
 
-/* Scroll frames */
+/* Scroll frames (i love scrolling) */
+
 .scroll-frame {
+  box-sizing: border-box;
   overflow-y: auto;
   padding-right: 8px;
   scrollbar-width: thin;
@@ -780,24 +646,29 @@ nav {
 
 .performance-scroll {
   max-height: calc(100vh - 320px);
+  padding: 10px 16px 22px 6px;
   display: grid;
-  gap: 14px;
+  gap: 18px;
 }
 
 .troupe-scroll {
   max-height: calc(100vh - 315px);
+  padding: 10px 16px 22px 6px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
 }
 
-/* Performance cards */
+/* Performance cards (or if your boring its the tasks you see) */
+
 .performance-card {
+  margin: 2px 0;
+  padding: 15px;
   display: grid;
   grid-template-columns: 58px minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
-  padding: 15px;
+  overflow: visible;
   border-radius: 22px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(127, 220, 255, 0.05)),
@@ -812,7 +683,7 @@ nav {
 }
 
 .performance-card:hover {
-  transform: translateY(-3px) scale(1.006);
+  transform: translateY(-2px) scale(1.003);
   border-color: rgba(245, 217, 139, 0.5);
   box-shadow:
     0 10px 22px rgba(0, 0, 0, 0.18),
@@ -893,10 +764,12 @@ nav {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Troupe cards */
+/* Troupe cards!! aka the groups you are in */
+
 .troupe-card,
 .join-troupe-card {
   min-height: 155px;
+  margin: 3px;
   padding: 18px;
   border-radius: 24px;
   text-align: center;
@@ -937,20 +810,17 @@ nav {
   color: var(--furina-muted);
 }
 
-.bottom-actions {
-  margin-top: 18px;
-}
+/* Chat (ok idk why i added this its funny ig) */
 
-/* Chat */
 .chat-box {
+  min-height: 420px;
+  height: calc(100vh - 280px);
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 280px);
-  min-height: 420px;
+  overflow: hidden;
   border-radius: 24px;
   background: rgba(7, 21, 39, 0.54);
   border: 1px solid rgba(127, 220, 255, 0.18);
-  overflow: hidden;
 }
 
 .chat-messages {
@@ -978,9 +848,10 @@ nav {
   height: 38px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--furina-gold), var(--furina-cyan));
-  color: #071827;
+  color: var(--furina-dark);
   font-weight: 900;
 }
 
@@ -992,8 +863,8 @@ nav {
 }
 
 .chat-bubble {
-  margin: 0;
   max-width: 420px;
+  margin: 0;
   padding: 11px 14px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.09);
@@ -1018,27 +889,30 @@ nav {
 }
 
 .chat-input-row button {
+  padding: 0 18px;
   border: none;
   border-radius: 999px;
-  padding: 0 18px;
-  font-weight: 900;
   background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
-  color: #071827;
+  color: var(--furina-dark);
+  font-weight: 900;
   cursor: pointer;
 }
 
-/* Furina sidebar */
+/* Filter panel */
+
 .furina-sidebar {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 0;
 }
 
 .furina-viewport {
-  min-height: 510px;
-  border-radius: 30px;
+  min-height: 650px;
   padding: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 34px;
   background:
     radial-gradient(circle at top, rgba(127, 220, 255, 0.16), transparent 45%),
     linear-gradient(145deg, rgba(7, 21, 39, 0.9), rgba(12, 43, 75, 0.76));
@@ -1047,8 +921,6 @@ nav {
   box-shadow:
     0 0 26px rgba(127, 220, 255, 0.14),
     inset 0 0 28px rgba(255, 255, 255, 0.03);
-  display: grid;
-  place-items: center;
 }
 
 .furina-placeholder {
@@ -1057,30 +929,31 @@ nav {
 }
 
 .furina-placeholder-icon {
-  font-size: 54px;
+  font-size: 72px;
   animation: sparkleFloat 3.5s ease-in-out infinite;
 }
 
 .furina-placeholder h2 {
   margin: 10px 0 5px;
   color: var(--furina-white);
+  font-size: 30px;
 }
 
 .furina-line {
+  max-width: 360px;
   margin: 18px auto 0;
-  max-width: 290px;
   padding: 13px 15px;
   border-radius: 18px;
   color: var(--furina-white);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(127, 220, 255, 0.2);
+  font-size: 16px;
   font-style: italic;
 }
 
-/* Filter panel under Furina */
 .filter-panel {
   display: none;
-  padding: 18px;
+  padding: 20px;
   border-radius: 24px;
   background: rgba(7, 21, 39, 0.86);
   border: 1px solid rgba(127, 220, 255, 0.24);
@@ -1104,58 +977,13 @@ nav {
 }
 
 .close-small {
+  color: var(--furina-gold);
   font-size: 26px;
   cursor: pointer;
-  color: var(--furina-gold);
 }
 
-.filter-form,
-.pretty-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* Modals (or popups ig) */
 
-.filter-form label,
-.pretty-form label {
-  margin-top: 5px;
-  color: var(--furina-muted);
-  font-weight: 800;
-  font-size: 14px;
-}
-
-/* Inputs */
-.dashboard-shell input,
-.dashboard-shell textarea,
-.dashboard-shell select,
-.modal-card input,
-.modal-card textarea,
-.modal-card select {
-  padding: 11px 13px;
-  border-radius: 13px;
-  border: 1px solid rgba(127, 220, 255, 0.26);
-  background: rgba(255, 255, 255, 0.94);
-  color: #071827;
-  outline: none;
-  font-family: "Nunito", "Trebuchet MS", sans-serif;
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.dashboard-shell input:focus,
-.dashboard-shell textarea:focus,
-.dashboard-shell select:focus,
-.modal-card input:focus,
-.modal-card textarea:focus,
-.modal-card select:focus {
-  transform: translateY(-1px);
-  border-color: var(--furina-gold);
-  box-shadow: 0 0 0 3px rgba(127, 220, 255, 0.16);
-}
-
-/* Modals */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1171,8 +999,15 @@ nav {
 #add-performance-toggle:checked ~ .add-performance-modal,
 #create-troupe-toggle:checked ~ .create-troupe-modal,
 #join-troupe-toggle:checked ~ .join-troupe-modal,
-#troupe-detail-toggle:checked ~ .troupe-detail-modal {
+#troupe-detail-toggle:checked ~ .troupe-detail-modal,
+#task-icon-picker-toggle:checked ~ .task-icon-picker-modal,
+#group-icon-picker-toggle:checked ~ .group-icon-picker-modal {
   display: grid;
+}
+
+.task-icon-picker-modal,
+.group-icon-picker-modal {
+  z-index: 10050;
 }
 
 .modal-card {
@@ -1180,7 +1015,7 @@ nav {
   width: min(560px, 92vw);
   max-height: 86vh;
   overflow-y: auto;
-  padding: 28px;
+  padding: 30px 30px 44px;
   border-radius: 28px;
   background:
     radial-gradient(circle at top right, rgba(127, 220, 255, 0.13), transparent 38%),
@@ -1192,8 +1027,16 @@ nav {
   animation: modalPop 0.3s ease both;
 }
 
+.troupe-detail-modal .modal-card {
+  padding-bottom: 54px;
+}
+
 .wide-modal {
   width: min(820px, 94vw);
+}
+
+.icon-picker-card {
+  width: min(720px, 94vw);
 }
 
 .modal-close {
@@ -1228,6 +1071,11 @@ nav {
   line-height: 1.6;
 }
 
+.modal-actions {
+  margin-top: 22px;
+  padding-bottom: 8px;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1245,13 +1093,17 @@ nav {
 
 .detail-grid span {
   display: block;
+  margin-bottom: 4px;
   color: var(--furina-muted);
   font-size: 12px;
-  margin-bottom: 4px;
 }
 
 .detail-grid strong {
   color: var(--furina-white);
+}
+
+.members-placeholder {
+  margin-bottom: 18px;
 }
 
 .members-placeholder h3 {
@@ -1271,6 +1123,7 @@ nav {
 }
 
 /* Empty states */
+
 .empty-state {
   min-height: 280px;
   display: grid;
@@ -1298,226 +1151,8 @@ nav {
   margin: 6px 0 0;
 }
 
-/* Animations */
-@keyframes softAppear {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+/* Icon picker (very necessary) ts is lowkey hardcoded :skull */
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes modalPop {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes sparkleFloat {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(8deg);
-  }
-}
-
-/* Responsive */
-@media (max-width: 1100px) {
-  .dashboard-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .furina-sidebar {
-    order: -1;
-  }
-
-  .furina-viewport {
-    min-height: 260px;
-  }
-}
-
-@media (max-width: 760px) {
-  .dashboard-shell {
-    margin: 155px 14px 18px;
-  }
-
-  .theatre-tabs {
-    flex-direction: column;
-  }
-
-  .panel-header {
-    flex-direction: column;
-  }
-
-  .performance-card {
-    grid-template-columns: 48px 1fr;
-  }
-
-  .task-meta {
-    grid-column: 1 / -1;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-}
-/* ========================================================= */
-/*             FULL REPLACEMENT PATCHES / IMPROVEMENTS      */
-/* ========================================================= */
-
-/* These bottom rules intentionally override older dashboard rules above. */
-
-/* ---------- Fix hover overlap / cramped edges ---------- */
-.scroll-frame {
-  box-sizing: border-box;
-}
-
-.performance-scroll {
-  padding: 10px 16px 22px 6px;
-  gap: 18px;
-}
-
-.performance-card {
-  margin: 2px 0;
-  overflow: visible;
-  box-sizing: border-box;
-}
-
-.performance-card:hover {
-  transform: translateY(-2px) scale(1.003);
-}
-
-.troupe-scroll {
-  padding: 10px 16px 22px 6px;
-}
-
-.troupe-card,
-.join-troupe-card {
-  margin: 3px;
-  box-sizing: border-box;
-}
-
-.modal-card {
-  padding: 30px 30px 44px;
-  box-sizing: border-box;
-}
-
-.modal-actions {
-  margin-top: 22px;
-  padding-bottom: 8px;
-}
-
-.troupe-detail-modal .modal-card {
-  padding-bottom: 54px;
-}
-
-.members-placeholder {
-  margin-bottom: 18px;
-}
-
-.modal-card .cute-btn:hover {
-  transform: translateY(-1px) scale(1.01);
-}
-
-.danger-btn {
-  margin: 4px 0;
-}
-
-.modal-actions .danger-btn,
-.modal-actions .secondary-btn,
-.modal-actions .primary-action-btn {
-  min-height: 40px;
-}
-
-/* ---------- Larger Furina viewport ---------- */
-.dashboard-shell {
-  grid-template-columns: minmax(0, 1fr) 500px;
-  gap: 24px;
-}
-
-.furina-viewport {
-  min-height: 650px;
-  border-radius: 34px;
-}
-
-.furina-placeholder-icon {
-  font-size: 72px;
-}
-
-.furina-placeholder h2 {
-  font-size: 30px;
-}
-
-.furina-line {
-  max-width: 360px;
-  font-size: 16px;
-}
-
-.filter-panel {
-  padding: 20px;
-}
-
-/* ---------- New image tab icons ---------- */
-.theatre-tabs {
-  align-items: stretch;
-}
-
-.theatre-tab {
-  min-height: 78px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-}
-
-.theatre-tab span {
-  margin-right: 0;
-}
-
-.tab-icon-img {
-  width: 58px;
-  height: 58px;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 0 8px rgba(127, 220, 255, 0.35))
-    saturate(0.95);
-  transition:
-    transform 0.22s ease,
-    filter 0.22s ease;
-}
-
-.theatre-tab:hover .tab-icon-img {
-  transform: translateY(-3px) rotate(-3deg) scale(1.06);
-  filter:
-    drop-shadow(0 0 14px rgba(245, 217, 139, 0.45))
-    saturate(1.08);
-}
-
-#tab-performances:checked ~ .dashboard-shell label[for="tab-performances"] .tab-icon-img,
-#tab-troupes:checked ~ .dashboard-shell label[for="tab-troupes"] .tab-icon-img,
-#tab-tea:checked ~ .dashboard-shell label[for="tab-tea"] .tab-icon-img {
-  transform: scale(1.08);
-  filter:
-    drop-shadow(0 0 14px rgba(7, 24, 39, 0.28))
-    saturate(1.12);
-}
-
-/* ---------- Icon selection preview ---------- */
 .icon-select-preview {
   display: flex;
   align-items: center;
@@ -1529,6 +1164,7 @@ nav {
 }
 
 .chosen-icon-preview {
+  flex-shrink: 0;
   width: 58px;
   height: 58px;
   display: grid;
@@ -1544,7 +1180,6 @@ nav {
   box-shadow:
     inset 0 0 14px rgba(255, 255, 255, 0.06),
     0 0 12px rgba(127, 220, 255, 0.16);
-  flex-shrink: 0;
 }
 
 .icon-select-preview p {
@@ -1573,21 +1208,6 @@ nav {
   transform: translateY(-1px);
   background: rgba(127, 220, 255, 0.2);
   box-shadow: 0 0 12px rgba(127, 220, 255, 0.18);
-}
-
-/* ---------- Icon picker modal ---------- */
-#task-icon-picker-toggle:checked ~ .task-icon-picker-modal,
-#group-icon-picker-toggle:checked ~ .group-icon-picker-modal {
-  display: grid;
-}
-
-.task-icon-picker-modal,
-.group-icon-picker-modal {
-  z-index: 10050;
-}
-
-.icon-picker-card {
-  width: min(720px, 94vw);
 }
 
 .icon-picker-grid {
@@ -1633,16 +1253,18 @@ nav {
     rgba(7, 21, 39, 0.82);
 }
 
-.icon-choice-card img {
+.icon-choice-card img,
+.icon-choice-symbol {
   width: 72px;
   height: 72px;
+}
+
+.icon-choice-card img {
   object-fit: contain;
   filter: drop-shadow(0 0 10px rgba(127, 220, 255, 0.24));
 }
 
 .icon-choice-symbol {
-  width: 72px;
-  height: 72px;
   display: grid;
   place-items: center;
   border-radius: 22px;
@@ -1673,6 +1295,7 @@ nav {
 #group-icon-directing:checked + label,
 #group-icon-tea:checked + label,
 #group-icon-star:checked + label {
+  transform: translateY(-2px);
   border-color: rgba(245, 217, 139, 0.82);
   box-shadow:
     0 0 20px rgba(245, 217, 139, 0.22),
@@ -1680,7 +1303,6 @@ nav {
   background:
     linear-gradient(145deg, rgba(245, 217, 139, 0.18), rgba(127, 220, 255, 0.11)),
     rgba(7, 21, 39, 0.86);
-  transform: translateY(-2px);
 }
 
 #perf-icon-music:checked + label::after,
@@ -1700,7 +1322,7 @@ nav {
   padding: 4px 9px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
-  color: #071827;
+  color: var(--furina-dark);
   font-size: 11px;
   font-weight: 900;
 }
@@ -1710,7 +1332,88 @@ nav {
   margin-top: 20px;
 }
 
-/* ---------- Extra responsive fixes ---------- */
+/* Very tuff animations */
+
+@keyframes floatHat {
+  0%, 100% {
+    transform: rotate(-13deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-9deg) translateY(-8px);
+  }
+}
+
+@keyframes pulseVision {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+@keyframes floatChibi {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(8deg);
+  }
+}
+
+/* Responsive (lowkey idk if this works yet we pray) */
+
 @media (max-width: 1250px) {
   .dashboard-shell {
     grid-template-columns: minmax(0, 1fr) 430px;
@@ -1726,16 +1429,32 @@ nav {
     grid-template-columns: 1fr;
   }
 
+  .furina-sidebar {
+    order: -1;
+  }
+
   .furina-viewport {
     min-height: 360px;
   }
+}
 
-  .furina-sidebar {
-    order: -1;
+@media (max-width: 900px) {
+  .auth-chibi {
+    width: 135px;
+    right: -35px;
+    bottom: -45px;
   }
 }
 
 @media (max-width: 760px) {
+  .dashboard-shell {
+    margin: 155px 14px 18px;
+  }
+
+  .theatre-tabs {
+    flex-direction: column;
+  }
+
   .theatre-tab {
     min-height: 64px;
   }
@@ -1743,6 +1462,25 @@ nav {
   .tab-icon-img {
     width: 46px;
     height: 46px;
+  }
+
+  .panel-header {
+    flex-direction: column;
+  }
+
+  .performance-card {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .task-meta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
   }
 
   .icon-picker-grid {
@@ -1757,5 +1495,35 @@ nav {
   .icon-choice-symbol {
     width: 58px;
     height: 58px;
+  }
+}
+
+@media (max-width: 650px) {
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .auth-hat {
+    width: 82px;
+    top: -32px;
+    left: -12px;
+  }
+
+  .auth-vision {
+    width: 54px;
+    top: 16px;
+    right: 14px;
+  }
+
+  .auth-chibi {
+    width: 105px;
+    right: -8px;
+    bottom: -55px;
   }
 }
