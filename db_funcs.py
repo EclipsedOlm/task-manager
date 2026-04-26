@@ -34,7 +34,11 @@ def retrieveUser(username: str):
 
 
 def insertUser(username: str, password: str, admin: bool):
-    if(len(retrieveUser(username)) == 0):
+    if username == "admin":
+        return "success"
+    elif len(username) > 30 or len(password) > 30:
+        return "max_length_reached"
+    elif(len(retrieveUser(username)) == 0):
         cursor.execute("INSERT INTO users(username, password, admin) VALUES (%s,%s)", (username, password, admin))
         conn.commit()
         return "success"
@@ -79,11 +83,111 @@ def addUserToGroup(username, group_name):
 
 # Some functions I plan to do in the future but idk if yall need. so lmk what functions yall need
 # ESPECIALLy i need to know what info i will have, then i can make the relevant queries to get data to insert
-def insertTask():
+
+#Wait let me help you out here I think these are the things I'd need for now and the info you get (with types)
+def retrieveGroupsForUser(username:str):
+    user_data = retrieveUser(username)
+
+    #some magic happens here
+
+    #return cursor.fetchall() then I get all the groups
+
+
+def retrieveAllGroups():
+    pass
+    #Just dump lol select all or sth
+
+    #return cursor.fetchall()
+
+
+def retrieveMembersByGroup(group_name:str):
+    group_data = retrieveGroup(group_name)
+
+    #black magic happens here giving me all the members from the group
+
+    #return cursor.fetchall()
+
+
+def retrieveTasksForUser(username:str):
+    user_data = retrieveUser(username)
+
+    #gimme all the task of the user (wait lowkey i should put this behind insert task lol)
+
+    #return cursor.fetchall()
+
+
+def getTaskInfo(task_id: int):
+    #get all the task info should be a one liner
+    return cursor.fetchall()
+
+
+def insertTask(title:str,description:str,assigned_to:str,created_by:str,status:str,priority:str,deadline:str,icon:str,group_name:str):
+    group_data = retrieveGroup(group_name)
+
+    #dump all these info into the db
+    #VERY IMPORTANT YOU NEED A task_id COLUMN GENERATE IT HERE IF YOU WISH
+
+    #conn.commit()
+    #return "success"
+
+
+def deleteTask(task_id:int):
+    pass
+    #delete
+    #wait lowkey wouldn't it be cool if only the creator can delete the task
+
+    #conn.commit()
+    #return "success"
+
+
+def editTask(task_id:int,title:str,description:str,assigned_to:str,created_by:str,status:str,priority:str,deadline:str,icon:str):
+    pass
+    #update the changes (only creator should be able to do this (actually we might have to check this in main.py))
+
+    #conn.commit()
+    #return "success"
+
+
+def updateTaskStatus(task_id:int,status:str):
+    pass
+    #update changes to the status of the task (anyone can do this)
+
+    #conn.commit()
+    #return "success"
+
+#Also ig we also need a delete group but it's not urgent ig we can just leave empty groups to die
+
+
+def updateProfilePicture(username:str,profile_picture:str):
+    user_data = retrieveUser(username)
+
+    #update to db
+
+    #conn.commit()
+    #return "success"
+
+
+def getProfilePicture(username:str):
+    user_data = retrieveUser(username)
+
+    #Get the pfp of the user (str)
+
+    #return cursor.fetchall()
+
+
+def sendMessage(username:str,message:str):
+    user_data = retrieveUser(username)
+
+    #add to db (I think we the db can be [Index][Username/ID][Message])
+    #Index basically determines the orders of the messages so when we try to get the chat history we know the order
+
+    #conn.commit()
+    #return "success"
+
+
+def getChatHistory():
     pass
 
-def retrieveTaskByGroup():
-    pass
+    #Get the entire chat/msg db ig
 
-def retrieveTaskByName():
-    pass
+    #return cursor.fetchall()

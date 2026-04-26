@@ -13,10 +13,8 @@
         <!-- Popup controls -->
         <input type="checkbox" id="filter-toggle" class="modal-toggle">
         <input type="checkbox" id="add-performance-toggle" class="modal-toggle">
-        <input type="checkbox" id="task-detail-toggle" class="modal-toggle">
         <input type="checkbox" id="create-troupe-toggle" class="modal-toggle">
         <input type="checkbox" id="join-troupe-toggle" class="modal-toggle">
-        <input type="checkbox" id="troupe-detail-toggle" class="modal-toggle">
         <input type="checkbox" id="task-icon-picker-toggle" class="modal-toggle">
         <input type="checkbox" id="group-icon-picker-toggle" class="modal-toggle">
 
@@ -76,68 +74,190 @@
 
                     <div class="todo-row">
                         <label class="pretty-checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" id="todo-only-checkbox">
                             <span></span>
                             To-do only
                         </label>
                     </div>
 
-                    <div class="scroll-frame performance-scroll">
-                        <!--
-                            Might need a loop here or sth to get all the task
-                            below are just some placeholders
-                        -->
+                    <div class="scroll-frame performance-scroll" id="performance-scroll" data-current-user="{{ username }}">
+                        <!-- OH IT WORKS -->
 
-                        <label for="task-detail-toggle" class="performance-card high-priority-card">
-                            <div class="task-icon">🎼</div>
+                        {% if tasks %}
+                            {% for task in tasks %}
+                                <div
+                                    class="task-entry"
+                                    data-title="{{ task.title|default('', true)|lower }}"
+                                    data-description="{{ task.description|default('', true)|lower }}"
+                                    data-assigned="{{ task.assigned_to|default('', true) }}"
+                                    data-status="{{ task.status|default('Not Started', true) }}"
+                                    data-priority="{{ task.priority|default('Medium', true) }}"
+                                    data-deadline="{{ task.deadline|default('', true) }}"
+                                >
+                                    <input type="checkbox" id="task-detail-toggle-{{ task.task_id }}" class="modal-toggle task-modal-toggle">
 
-                            <div class="task-main-info">
-                                <h3>Prepare Fontaine Presentation</h3>
-                                <p>Assigned to: <strong>Yinchen</strong></p>
+                                    <label for="task-detail-toggle-{{ task.task_id }}" class="performance-card {{ task.priority|default('medium', true)|lower }}-priority-card">
+                                        <div class="task-icon">
+                                            {% if task.icon and '.png' in task.icon %}
+                                                <img src="{{ url_for('static', filename='icons/' ~ task.icon) }}" alt="Task Icon">
+                                            {% else %}
+                                                {{ task.icon|default('🎼', true) }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="task-main-info">
+                                            <h3>{{ task.title }}</h3>
+                                            <p>Assigned to: <strong>{{ task.assigned_to }}</strong></p>
+                                            <p>Troupe: <strong>{{ task.group_name|default('Unknown Troupe', true) }}</strong></p>
+                                        </div>
+
+                                        <div class="task-meta">
+                                            <span class="pill priority-pill {{ task.priority|default('medium', true)|lower }}">{{ task.priority|default('Medium', true) }}</span>
+                                            <span class="deadline-pill">Due: {{ task.deadline|default('No deadline', true) }}</span>
+                                        </div>
+                                    </label>
+
+                                    <div class="modal-overlay task-detail-modal">
+                                        <div class="modal-card wide-modal">
+                                            <label for="task-detail-toggle-{{ task.task_id }}" class="modal-close">×</label>
+
+                                            <div class="modal-title-row">
+                                                <div class="modal-icon">
+                                                    {% if task.icon and '.png' in task.icon %}
+                                                        <img src="{{ url_for('static', filename='icons/' ~ task.icon) }}" alt="Task Icon">
+                                                    {% else %}
+                                                        {{ task.icon|default('🎼', true) }}
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <p class="eyebrow">Performance Details</p>
+                                                    <h2>{{ task.title }}</h2>
+                                                </div>
+                                            </div>
+
+                                            <p class="modal-description">
+                                                {{ task.description|default('No description provided.', true) }}
+                                            </p>
+
+                                            <div class="detail-grid">
+                                                <div>
+                                                    <span>Assigned Member</span>
+                                                    <strong>{{ task.assigned_to }}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Created By</span>
+                                                    <strong>{{ task.created_by }}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Status</span>
+                                                    <strong>{{ task.status|default('Not Started', true) }}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Priority</span>
+                                                    <strong>{{ task.priority|default('Medium', true) }}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Deadline</span>
+                                                    <strong>{{ task.deadline|default('No deadline', true) }}</strong>
+                                                </div>
+
+                                                <div>
+                                                    <span>Troupe</span>
+                                                    <strong>{{ task.group_name|default('Unknown Troupe', true) }}</strong>
+                                                </div>
+                                            </div>
+
+                                            <div class="status-update-box">
+                                                <h3>Edit Status</h3>
+                                                <form action="/update_task_status/{{ task.task_id }}" method="POST" class="inline-status-form">
+                                                    <select name="status">
+                                                        <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                                                        <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                                        <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                                    </select>
+
+                                                    <button type="submit" class="cute-btn secondary-btn">Update Status</button>
+                                                </form>
+                                            </div>
+
+                                            {% if task.created_by == username %}
+                                                <div class="creator-edit-box">
+                                                    <h3>Creator Controls</h3>
+                                                    <form action="/edit_task/{{ task.task_id }}" method="POST" class="pretty-form edit-task-form">
+                                                        <label>Task Name</label>
+                                                        <input type="text" name="title" value="{{ task.title }}" required>
+
+                                                        <label>Description</label>
+                                                        <textarea name="description" rows="4">{{ task.description }}</textarea>
+
+                                                        <label>Assigned Member</label>
+                                                        <select name="assigned_to" required>
+                                                            {% for group_name, members in members_by_group.items() %}
+                                                                <optgroup label="{{ group_name }}">
+                                                                    {% for member in members %}
+                                                                        <option value="{{ member.username }}" {% if member.username == task.assigned_to %}selected{% endif %}>{{ member.username }}</option>
+                                                                    {% endfor %}
+                                                                </optgroup>
+                                                            {% endfor %}
+                                                        </select>
+
+                                                        <label>Status</label>
+                                                        <select name="status">
+                                                            <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                                                            <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                                        </select>
+
+                                                        <label>Priority</label>
+                                                        <select name="priority">
+                                                            <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
+                                                            <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                                                            <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
+                                                        </select>
+
+                                                        <label>Icon</label>
+                                                        <select name="performance_icon">
+                                                            <option value="🎼" {% if task.icon == '🎼' %}selected{% endif %}>🎼 Music</option>
+                                                            <option value="🧁" {% if task.icon == '🧁' %}selected{% endif %}>🧁 Cake</option>
+                                                            <option value="💧" {% if task.icon == '💧' %}selected{% endif %}>💧 Hydro</option>
+                                                            <option value="🎭" {% if task.icon == '🎭' %}selected{% endif %}>🎭 Mask</option>
+                                                            <option value="👑" {% if task.icon == '👑' %}selected{% endif %}>👑 Crown</option>
+                                                            <option value="Furina_smiling.png" {% if task.icon == 'Furina_smiling.png' %}selected{% endif %}>Furina Star</option>
+                                                        </select>
+
+                                                        <label>Deadline</label>
+                                                        <input type="date" name="deadline" value="{{ task.deadline }}">
+
+                                                        <div class="modal-actions">
+                                                            <button type="submit" class="cute-btn primary-action-btn">Save Changes</button>
+                                                        </div>
+                                                    </form>
+
+                                                    <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form" onsubmit="return confirm('Delete this performance?');">
+                                                        <button type="submit" class="cute-btn danger-btn">Delete</button>
+                                                    </form>
+                                                </div>
+                                            {% else %}
+                                                <p class="creator-note">Only {{ task.created_by }} can edit the full performance details.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- If therere no tasks we show this trust -->
+                            <div class="empty-state compact-empty-state">
+                                <div class="empty-icon image-empty-icon cake-empty-icon">
+                                    <img src="{{ url_for('static', filename='images/furina_cake.png') }}" alt="Furina Cake">
+                                </div>
+                                <h3>No performances at the moment</h3>
+                                <p>Grab a cake and relax~</p>
                             </div>
-
-                            <div class="task-meta">
-                                <span class="pill priority-pill high">High</span>
-                                <span class="deadline-pill">Due: 24 Apr</span>
-                            </div>
-                        </label>
-
-                        <label for="task-detail-toggle" class="performance-card medium-priority-card">
-                            <div class="task-icon">🧁</div>
-
-                            <div class="task-main-info">
-                                <h3>Design Login Page</h3>
-                                <p>Assigned to: <strong>James</strong></p>
-                            </div>
-
-                            <div class="task-meta">
-                                <span class="pill priority-pill medium">Medium</span>
-                                <span class="deadline-pill">Due: 27 Apr</span>
-                            </div>
-                        </label>
-
-                        <label for="task-detail-toggle" class="performance-card low-priority-card">
-                            <div class="task-icon">💧</div>
-
-                            <div class="task-main-info">
-                                <h3>Polish Group Interface</h3>
-                                <p>Assigned to: <strong>Kai Qin</strong></p>
-                            </div>
-
-                            <div class="task-meta">
-                                <span class="pill priority-pill low">Low</span>
-                                <span class="deadline-pill">Due: 30 Apr</span>
-                            </div>
-                        </label>
-
-                        <!-- If therere no tasks we show this trust -->
-                        <!--
-                        <div class="empty-state">
-                            <div class="empty-icon">🍰</div>
-                            <h3>No performances at the moment</h3>
-                            <p>Grab a cake and relax~</p>
-                        </div>
-                        -->
+                        {% endif %}
                     </div>
                 </section>
 
@@ -158,32 +278,63 @@
                             Place holders again, we needa get the groups from db here
                         -->
 
-                        <label for="troupe-detail-toggle" class="troupe-card">
-                            <div class="troupe-icon">🎩</div>
-                            <h3>Fontaine Dev Team</h3>
-                            <p>4 performers</p>
-                        </label>
+                        {% if user_groups %}
+                            {% for group in user_groups %}
+                                <div class="troupe-entry">
+                                    <input type="checkbox" id="troupe-detail-toggle-{{ loop.index }}" class="modal-toggle troupe-modal-toggle">
 
-                        <label for="troupe-detail-toggle" class="troupe-card">
-                            <div class="troupe-icon">💎</div>
-                            <h3>Hydro Planning Crew</h3>
-                            <p>3 performers</p>
-                        </label>
+                                    <label for="troupe-detail-toggle-{{ loop.index }}" class="troupe-card">
+                                        <div class="troupe-icon">🎩</div>
+                                        <h3>{{ group.group_name }}</h3>
+                                        <p>{{ members_by_group.get(group.group_name, [])|length }} performers</p>
+                                    </label>
 
-                        <label for="troupe-detail-toggle" class="troupe-card">
-                            <div class="troupe-icon">🫖</div>
-                            <h3>Tea Time Committee</h3>
-                            <p>5 performers</p>
-                        </label>
+                                    <div class="modal-overlay troupe-detail-modal">
+                                        <div class="modal-card">
+                                            <label for="troupe-detail-toggle-{{ loop.index }}" class="modal-close">×</label>
 
-                        <!-- Trust bro -->
-                        <!--
-                        <div class="empty-state">
-                            <div class="empty-icon">🎭</div>
-                            <h3>You aren't part of any troupe yet!</h3>
-                            <p>Create or join one to start performing!</p>
-                        </div>
-                        -->
+                                            <div class="modal-title-row">
+                                                <div class="modal-icon">🎩</div>
+                                                <div>
+                                                    <p class="eyebrow">Troupe Details</p>
+                                                    <h2>{{ group.group_name }}</h2>
+                                                </div>
+                                            </div>
+
+                                            <p class="modal-description">
+                                                {{ group.group_description|default('No troupe description yet.', true) }}
+                                            </p>
+
+                                            <div class="members-placeholder">
+                                                <h3>Members</h3>
+                                                {% if members_by_group.get(group.group_name) %}
+                                                    <div class="member-chip-row">
+                                                        {% for member in members_by_group.get(group.group_name) %}
+                                                            <span class="member-chip">{{ member.username }}</span>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <p>Member profile cards will go here later.</p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="modal-actions">
+                                                <button type="button" class="cute-btn danger-btn">Leave Troupe</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Trust bro -->
+                            <div class="empty-state compact-empty-state">
+                                <div class="empty-icon image-empty-icon thinking-empty-icon">
+                                    <img src="{{ url_for('static', filename='images/furina_thinking.png') }}" alt="Thinking Furina">
+                                </div>
+                                <h3>You aren't part of any troupe yet!</h3>
+                                <p>Create or join one to start performing!</p>
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div class="bottom-actions">
@@ -210,35 +361,53 @@
                     </div>
 
                     <div class="chat-box">
-                        <div class="chat-messages">
-                            <div class="chat-message other-message">
-                                <div class="chat-avatar">F</div>
-                                <div>
-                                    <p class="chat-name">Furina</p>
-                                    <p class="chat-bubble">Welcome, my loyal performers! The stage awaits~</p>
-                                </div>
-                            </div>
+                        <div class="chat-messages" id="chat-messages">
+                            {% if chat_history %}
+                                {% for msg in chat_history %}
+                                    <div class="chat-message {% if msg.username == username %}my-message{% else %}other-message{% endif %}">
+                                        {% if msg.username != username %}
+                                            {% if msg.username|lower == "furina" %}
+                                                <div class="chat-avatar image-chat-avatar">
+                                                    <img src="{{ url_for('static', filename='images/furina_pfp.png') }}" alt="Furina">
+                                                </div>
+                                            {% else %}
+                                                <div class="chat-avatar">{{ msg.username[0]|upper }}</div>
+                                            {% endif %}
+                                        {% endif %}
 
-                            <div class="chat-message my-message">
-                                <div>
-                                    <p class="chat-name">You</p>
-                                    <p class="chat-bubble">I am ready for today’s tasks!</p>
-                                </div>
-                                <div class="chat-avatar">Y</div>
-                            </div>
+                                        <div>
+                                            <p class="chat-name">{% if msg.username == username %}You{% else %}{{ msg.username }}{% endif %}</p>
+                                            <p class="chat-bubble">{{ msg.message }}</p>
+                                        </div>
 
-                            <div class="chat-message other-message">
-                                <div class="chat-avatar">N</div>
-                                <div>
-                                    <p class="chat-name">Neuvillette</p>
-                                    <p class="chat-bubble">Please remember to update your task status.</p>
+                                        {% if msg.username == username %}
+                                            <div class="chat-avatar">{{ username[0]|upper }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="chat-message other-message">
+                                    <div class="chat-avatar image-chat-avatar">
+                                        <img src="{{ url_for('static', filename='images/furina_pfp.png') }}" alt="Furina">
+                                    </div>
+                                    <div>
+                                        <p class="chat-name">Furina</p>
+                                        <p class="chat-bubble">Welcome, my loyal performers! The stage awaits~</p>
+                                    </div>
                                 </div>
-                            </div>
+                            {% endif %}
                         </div>
 
-                        <form class="chat-input-row">
-                            <input type="text" placeholder="Send a message to the theatre...">
-                            <button type="button">Send</button>
+                        <form action="/send_message" method="POST" class="chat-input-row">
+                            <input 
+                                type="text" 
+                                name="message" 
+                                placeholder="Send a message to the theatre..." 
+                                required
+                                oninvalid="this.setCustomValidity('Brevity is the soul of wit, but you do have to type something...')"
+                                oninput="this.setCustomValidity('')"
+                            >
+                            <button type="submit">Send</button>
                         </form>
                     </div>
                 </section>
@@ -264,99 +433,53 @@
                         <label for="filter-toggle" class="close-small">×</label>
                     </div>
 
-                    <form class="filter-form">
+                    <form class="filter-form" id="filter-form">
                         <label>Search script</label>
-                        <input type="text" placeholder="Keyword...">
+                        <input type="text" id="filter-keyword" placeholder="Keyword...">
 
                         <label>Assigned performer</label>
-                        <select>
-                            <option>All Members</option>
-                            <option>James</option>
-                            <option>Boaz</option>
-                            <option>Kai Qin</option>
-                            <option>Yinchen</option>
+                        <select id="filter-assigned">
+                            <option value="">All Members</option>
+                            {% for group_name, members in members_by_group.items() %}
+                                {% for member in members %}
+                                    <option value="{{ member.username }}">{{ member.username }}</option>
+                                {% endfor %}
+                            {% endfor %}
                         </select>
 
                         <label>Status</label>
-                        <select>
-                            <option>All Statuses</option>
-                            <option>Not Started</option>
-                            <option>In Progress</option>
-                            <option>Completed</option>
+                        <select id="filter-status">
+                            <option value="">All Statuses</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
                         </select>
 
                         <label>Priority</label>
-                        <select>
-                            <option>All Priorities</option>
-                            <option>Low</option>
-                            <option>Medium</option>
-                            <option>High</option>
+                        <select id="filter-priority">
+                            <option value="">All Priorities</option>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
                         </select>
 
                         <label>Sort by deadline</label>
-                        <select>
-                            <option>Earliest first</option>
-                            <option>Latest first</option>
+                        <select id="filter-sort">
+                            <option value="earliest">Earliest first</option>
+                            <option value="latest">Latest first</option>
                         </select>
 
-                        <button type="button" class="cute-btn primary-action-btn">
+                        <button type="button" id="apply-filter-btn" class="cute-btn primary-action-btn">
                             Apply Filters
+                        </button>
+
+                        <button type="button" id="clear-filter-btn" class="cute-btn secondary-btn">
+                            Clear Filters
                         </button>
                     </form>
                 </section>
             </aside>
         </main>
-
-        <!-- Task detail popup (placehodlers)-->
-        <div class="modal-overlay task-detail-modal">
-            <div class="modal-card">
-                <label for="task-detail-toggle" class="modal-close">×</label>
-
-                <div class="modal-title-row">
-                    <div class="modal-icon">🎼</div>
-                    <div>
-                        <p class="eyebrow">Performance Details</p>
-                        <h2>Prepare Fontaine Presentation</h2>
-                    </div>
-                </div>
-
-                <p class="modal-description">
-                    Prepare slides and speaking points for the task manager showcase.
-                </p>
-
-                <div class="detail-grid">
-                    <div>
-                        <span>Assigned Member</span>
-                        <strong>Yinchen</strong>
-                    </div>
-
-                    <div>
-                        <span>Created By</span>
-                        <strong>Boaz</strong>
-                    </div>
-
-                    <div>
-                        <span>Status</span>
-                        <strong>In Progress</strong>
-                    </div>
-
-                    <div>
-                        <span>Priority</span>
-                        <strong>High</strong>
-                    </div>
-
-                    <div>
-                        <span>Deadline</span>
-                        <strong>24 Apr</strong>
-                    </div>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="cute-btn secondary-btn">Edit Performance</button>
-                    <button type="button" class="cute-btn danger-btn">Delete</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Add performance popup -->
         <div class="modal-overlay add-performance-modal">
@@ -366,10 +489,10 @@
                 <p class="eyebrow">New Act</p>
                 <h2>Add Performance</h2>
 
-                <form class="pretty-form">
+                <form action="/add_performance" method="POST" class="pretty-form" id="add-performance-form">
                     <label>Icon</label>
                     <div class="icon-select-preview">
-                        <div class="chosen-icon-preview">🎼</div>
+                        <div class="chosen-icon-preview" id="chosen-performance-icon-preview">🎼</div>
                         <div>
                             <p>Choose a performance icon</p>
                             <label for="task-icon-picker-toggle" class="mini-link-btn">
@@ -377,90 +500,51 @@
                             </label>
                         </div>
                     </div>
+                    <input type="hidden" name="performance_icon" id="add-performance-icon-value" value="🎼">
                     <!-- Needa update this preview and submit the selected icon -->
 
                     <label>Troupe</label>
-                    <select name="group_name">
+                    <select name="group_name" id="add-performance-group" required>
                         <option value="" selected disabled>Select a troupe...</option>
-                        <option value="Fontaine Dev Team">Fontaine Dev Team</option>
-                        <option value="Hydro Planning Crew">Hydro Planning Crew</option>
-                        <option value="Tea Time Committee">Tea Time Committee</option>
+                        {% for group in user_groups %}
+                            <option value="{{ group.group_name }}">{{ group.group_name }}</option>
+                        {% endfor %}
                     </select>
                     <!-- the dropdown should have the groups the user is part of -->
 
                     <label>Task Name</label>
-                    <input type="text" placeholder="Name of the performance...">
+                    <input type="text" name="title" placeholder="Name of the performance..." required>
 
                     <label>Description</label>
-                    <textarea rows="4" placeholder="What must be done?"></textarea>
+                    <textarea name="description" rows="4" placeholder="What must be done?"></textarea>
 
                     <label>Assigned Member</label>
-                    <select name="assigned_member">
-                        <option value="" selected disabled>Select a performer...</option>
-
-                        <optgroup label="Fontaine Dev Team">
-                            <option value="Yinchen">Yinchen</option>
-                            <option value="James">James</option>
-                            <option value="Boaz">Boaz</option>
-                            <option value="Kai Qin">Kai Qin</option>
-                        </optgroup>
-
-                        <optgroup label="Hydro Planning Crew">
-                            <option value="James">James</option>
-                            <option value="Kai Qin">Kai Qin</option>
-                            <option value="Yinchen">Yinchen</option>
-                        </optgroup>
-
-                        <optgroup label="Tea Time Committee">
-                            <option value="Boaz">Boaz</option>
-                            <option value="James">James</option>
-                            <option value="Kai Qin">Kai Qin</option>
-                        </optgroup>
+                    <select name="assigned_to" id="add-performance-assigned" required>
+                        <option value="" selected disabled>Select a troupe first...</option>
                     </select>
                     <!-- need to show only members from the selected troupe -->
 
                     <label>Priority</label>
-                    <select>
-                        <option>Low</option>
-                        <option selected>Medium</option>
-                        <option>High</option>
+                    <select name="priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Not Started" selected>Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
                     </select>
 
                     <label>Deadline</label>
-                    <input type="date">
+                    <input type="date" name="deadline" required>
 
-                    <button type="button" class="cute-btn primary-action-btn">
+                    <button type="submit" class="cute-btn primary-action-btn">
                         Create Performance
                     </button>
                 </form>
-            </div>
-        </div>
-
-        <!-- Troupe detail popup -->
-        <div class="modal-overlay troupe-detail-modal">
-            <div class="modal-card">
-                <label for="troupe-detail-toggle" class="modal-close">×</label>
-
-                <div class="modal-title-row">
-                    <div class="modal-icon">🎩</div>
-                    <div>
-                        <p class="eyebrow">Troupe Details</p>
-                        <h2>Fontaine Dev Team</h2>
-                    </div>
-                </div>
-
-                <p class="modal-description">
-                    A group for building the grandest task manager in all of Fontaine.
-                </p>
-
-                <div class="members-placeholder">
-                    <h3>Members</h3>
-                    <p>Member profile cards will go here later.</p>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="cute-btn danger-btn">Leave Troupe</button>
-                </div>
             </div>
         </div>
 
@@ -472,10 +556,10 @@
                 <p class="eyebrow">Gather the Cast</p>
                 <h2>Create Troupe</h2>
 
-                <form class="pretty-form">
+                <form action="/create_troupe" method="POST" class="pretty-form">
                     <label>Group Icon</label>
                     <div class="icon-select-preview">
-                        <div class="chosen-icon-preview">🎩</div>
+                        <div class="chosen-icon-preview" id="chosen-group-icon-preview">🎩</div>
                         <div>
                             <p>Choose a troupe icon</p>
                             <label for="group-icon-picker-toggle" class="mini-link-btn">
@@ -483,15 +567,16 @@
                             </label>
                         </div>
                     </div>
+                    <input type="hidden" name="group_icon" id="create-troupe-icon-value" value="🎩">
                     <!-- need to update this preview and submit the selected icon same as above -->
 
                     <label>Group Name</label>
-                    <input type="text" placeholder="Name your troupe...">
+                    <input type="text" name="group_name" placeholder="Name your troupe..." required>
 
                     <label>Group Description</label>
-                    <textarea rows="4" placeholder="What is this troupe for?"></textarea>
+                    <textarea name="group_desc" rows="4" placeholder="What is this troupe for?"></textarea>
 
-                    <button type="button" class="cute-btn primary-action-btn">
+                    <button type="submit" class="cute-btn primary-action-btn">
                         Create Troupe
                     </button>
                 </form>
@@ -507,26 +592,34 @@
                 <h2>Join a Troupe</h2>
 
                 <div class="join-troupe-grid">
-                    <div class="join-troupe-card">
-                        <div class="troupe-icon">🎩</div>
-                        <h3>Fontaine Dev Team</h3>
-                        <p>A team for app development.</p>
-                        <button type="button" class="cute-btn primary-action-btn">Join</button>
-                    </div>
+                    {% if all_groups %}
+                        {% for group in all_groups %}
+                            {% set ns = namespace(already_joined=false) %}
+                            {% for owned_group in user_groups %}
+                                {% if owned_group.group_name == group.group_name %}
+                                    {% set ns.already_joined = true %}
+                                {% endif %}
+                            {% endfor %}
 
-                    <div class="join-troupe-card">
-                        <div class="troupe-icon">🧁</div>
-                        <h3>Dessert Planning</h3>
-                        <p>A group for event logistics.</p>
-                        <button type="button" class="cute-btn primary-action-btn">Join</button>
-                    </div>
-
-                    <div class="join-troupe-card">
-                        <div class="troupe-icon">💧</div>
-                        <h3>Hydro Designers</h3>
-                        <p>A group for UI polish.</p>
-                        <button type="button" class="cute-btn primary-action-btn">Join</button>
-                    </div>
+                            {% if not ns.already_joined %}
+                                <div class="join-troupe-card">
+                                    <div class="troupe-icon">🎩</div>
+                                    <h3>{{ group.group_name }}</h3>
+                                    <p>{{ group.group_description|default('No troupe description yet.', true) }}</p>
+                                    <form action="/join_troupe" method="POST">
+                                        <input type="hidden" name="group_name" value="{{ group.group_name }}">
+                                        <button type="submit" class="cute-btn primary-action-btn">Join</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">🫖</div>
+                            <h3>No troupes are available yet</h3>
+                            <p>Perhaps it is time to create the first one~</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -544,38 +637,38 @@
                 </p>
 
                 <div class="icon-picker-grid">
-                    <input type="radio" name="performance_icon" id="perf-icon-music" checked>
-                    <label for="perf-icon-music" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-music" value="🎼" checked>
+                    <label for="perf-icon-music" class="icon-choice-card performance-icon-choice" data-icon="🎼">
                         <div class="icon-choice-symbol">🎼</div>
                         <span>Music</span>
                     </label>
 
-                    <input type="radio" name="performance_icon" id="perf-icon-cake">
-                    <label for="perf-icon-cake" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-cake" value="🧁">
+                    <label for="perf-icon-cake" class="icon-choice-card performance-icon-choice" data-icon="🧁">
                         <div class="icon-choice-symbol">🧁</div>
                         <span>Cake</span>
                     </label>
 
-                    <input type="radio" name="performance_icon" id="perf-icon-hydro">
-                    <label for="perf-icon-hydro" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-hydro" value="💧">
+                    <label for="perf-icon-hydro" class="icon-choice-card performance-icon-choice" data-icon="💧">
                         <div class="icon-choice-symbol">💧</div>
                         <span>Hydro</span>
                     </label>
 
-                    <input type="radio" name="performance_icon" id="perf-icon-mask">
-                    <label for="perf-icon-mask" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-mask" value="🎭">
+                    <label for="perf-icon-mask" class="icon-choice-card performance-icon-choice" data-icon="🎭">
                         <div class="icon-choice-symbol">🎭</div>
                         <span>Mask</span>
                     </label>
 
-                    <input type="radio" name="performance_icon" id="perf-icon-crown">
-                    <label for="perf-icon-crown" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-crown" value="👑">
+                    <label for="perf-icon-crown" class="icon-choice-card performance-icon-choice" data-icon="👑">
                         <div class="icon-choice-symbol">👑</div>
                         <span>Crown</span>
                     </label>
 
-                    <input type="radio" name="performance_icon" id="perf-icon-star">
-                    <label for="perf-icon-star" class="icon-choice-card">
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-star" value="Furina_smiling.png">
+                    <label for="perf-icon-star" class="icon-choice-card performance-icon-choice" data-icon="Furina_smiling.png">
                         <img
                             src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
                             alt="Furina Star"
@@ -605,26 +698,26 @@
                 </p>
 
                 <div class="icon-picker-grid">
-                    <input type="radio" name="group_icon" id="group-icon-hat" checked>
-                    <label for="group-icon-hat" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-hat" value="🎩" checked>
+                    <label for="group-icon-hat" class="icon-choice-card group-icon-choice" data-icon="🎩">
                         <div class="icon-choice-symbol">🎩</div>
                         <span>Hat</span>
                     </label>
 
-                    <input type="radio" name="group_icon" id="group-icon-crown">
-                    <label for="group-icon-crown" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-crown" value="👑">
+                    <label for="group-icon-crown" class="icon-choice-card group-icon-choice" data-icon="👑">
                         <div class="icon-choice-symbol">👑</div>
                         <span>Crown</span>
                     </label>
 
-                    <input type="radio" name="group_icon" id="group-icon-hydro">
-                    <label for="group-icon-hydro" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-hydro" value="💧">
+                    <label for="group-icon-hydro" class="icon-choice-card group-icon-choice" data-icon="💧">
                         <div class="icon-choice-symbol">💧</div>
                         <span>Hydro</span>
                     </label>
 
-                    <input type="radio" name="group_icon" id="group-icon-directing">
-                    <label for="group-icon-directing" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-directing" value="Furina_directing.png">
+                    <label for="group-icon-directing" class="icon-choice-card group-icon-choice" data-icon="Furina_directing.png">
                         <img
                             src="{{ url_for('static', filename='icons/Furina_directing.png') }}"
                             alt="Furina Directing"
@@ -632,8 +725,8 @@
                         <span>Director</span>
                     </label>
 
-                    <input type="radio" name="group_icon" id="group-icon-tea">
-                    <label for="group-icon-tea" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-tea" value="Furina_teatime.png">
+                    <label for="group-icon-tea" class="icon-choice-card group-icon-choice" data-icon="Furina_teatime.png">
                         <img
                             src="{{ url_for('static', filename='icons/Furina_teatime.png') }}"
                             alt="Furina Tea Time"
@@ -641,8 +734,8 @@
                         <span>Tea</span>
                     </label>
 
-                    <input type="radio" name="group_icon" id="group-icon-star">
-                    <label for="group-icon-star" class="icon-choice-card">
+                    <input type="radio" name="group_icon_picker" id="group-icon-star" value="Furina_smiling.png">
+                    <label for="group-icon-star" class="icon-choice-card group-icon-choice" data-icon="Furina_smiling.png">
                         <img
                             src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
                             alt="Furina Star"
@@ -658,5 +751,171 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            // Small helper so the icon pickers, filters, and member dropdown actually talk to the Flask routes.
+            document.addEventListener("DOMContentLoaded", function () {
+                // Remembers the selected tab after forms submit and the page reloads.
+                const tabRadios = document.querySelectorAll("input[name='main-tab']");
+                const savedTab = localStorage.getItem("furinaActiveTab");
+
+                if (savedTab) {
+                    const savedTabElement = document.getElementById(savedTab);
+                    if (savedTabElement) {
+                        savedTabElement.checked = true;
+                    }
+                }
+
+                tabRadios.forEach(function (radio) {
+                    radio.addEventListener("change", function () {
+                        if (radio.checked) {
+                            localStorage.setItem("furinaActiveTab", radio.id);
+                        }
+                    });
+                });
+
+                const iconPathPrefix = "{{ url_for('static', filename='icons/') }}";
+
+                function renderIconPreview(element, value) {
+                    if (!element) return;
+
+                    if (value && value.endsWith(".png")) {
+                        element.innerHTML = `<img src="${iconPathPrefix}${value}" alt="Selected icon">`;
+                    } else {
+                        element.textContent = value || "🎼";
+                    }
+                }
+
+                const performanceIconValue = document.getElementById("add-performance-icon-value");
+                const performanceIconPreview = document.getElementById("chosen-performance-icon-preview");
+
+                document.querySelectorAll("input[name='performance_icon_picker']").forEach(function (radio) {
+                    radio.addEventListener("change", function () {
+                        if (radio.checked) {
+                            performanceIconValue.value = radio.value;
+                            renderIconPreview(performanceIconPreview, radio.value);
+                        }
+                    });
+                });
+
+                const groupIconValue = document.getElementById("create-troupe-icon-value");
+                const groupIconPreview = document.getElementById("chosen-group-icon-preview");
+
+                document.querySelectorAll("input[name='group_icon_picker']").forEach(function (radio) {
+                    radio.addEventListener("change", function () {
+                        if (radio.checked) {
+                            groupIconValue.value = radio.value;
+                            renderIconPreview(groupIconPreview, radio.value);
+                        }
+                    });
+                });
+
+                const groupSelect = document.getElementById("add-performance-group");
+                const assignedSelect = document.getElementById("add-performance-assigned");
+
+                if (groupSelect && assignedSelect) {
+                    groupSelect.addEventListener("change", function () {
+                        const groupName = groupSelect.value;
+                        assignedSelect.innerHTML = `<option value="" selected disabled>Loading performers...</option>`;
+
+                        fetch(`/members/${encodeURIComponent(groupName)}`)
+                            .then(function (response) {
+                                return response.json();
+                            })
+                            .then(function (members) {
+                                assignedSelect.innerHTML = `<option value="" selected disabled>Select a performer...</option>`;
+
+                                if (members.length === 0) {
+                                    assignedSelect.innerHTML = `<option value="" selected disabled>No members found</option>`;
+                                    return;
+                                }
+
+                                members.forEach(function (member) {
+                                    const option = document.createElement("option");
+                                    option.value = member;
+                                    option.textContent = member;
+                                    assignedSelect.appendChild(option);
+                                });
+                            })
+                            .catch(function () {
+                                assignedSelect.innerHTML = `<option value="" selected disabled>Could not load members</option>`;
+                            });
+                    });
+                }
+
+                const taskList = document.getElementById("performance-scroll");
+                const keywordInput = document.getElementById("filter-keyword");
+                const assignedFilter = document.getElementById("filter-assigned");
+                const statusFilter = document.getElementById("filter-status");
+                const priorityFilter = document.getElementById("filter-priority");
+                const sortFilter = document.getElementById("filter-sort");
+                const todoOnly = document.getElementById("todo-only-checkbox");
+                const applyFilter = document.getElementById("apply-filter-btn");
+                const clearFilter = document.getElementById("clear-filter-btn");
+
+                function applyTaskFilters() {
+                    if (!taskList) return;
+
+                    const currentUser = taskList.dataset.currentUser || "";
+                    const keyword = (keywordInput?.value || "").toLowerCase().trim();
+                    const assigned = assignedFilter?.value || "";
+                    const status = statusFilter?.value || "";
+                    const priority = priorityFilter?.value || "";
+                    const onlyMine = todoOnly?.checked || false;
+
+                    const entries = Array.from(taskList.querySelectorAll(".task-entry"));
+
+                    entries.forEach(function (entry) {
+                        const title = entry.dataset.title || "";
+                        const description = entry.dataset.description || "";
+                        const taskAssigned = entry.dataset.assigned || "";
+                        const taskStatus = entry.dataset.status || "";
+                        const taskPriority = entry.dataset.priority || "";
+
+                        const matchesKeyword = !keyword || title.includes(keyword) || description.includes(keyword);
+                        const matchesAssigned = !assigned || taskAssigned === assigned;
+                        const matchesStatus = !status || taskStatus === status;
+                        const matchesPriority = !priority || taskPriority === priority;
+                        const matchesTodoOnly = !onlyMine || taskAssigned === currentUser;
+
+                        entry.classList.toggle(
+                            "hidden-by-filter",
+                            !(matchesKeyword && matchesAssigned && matchesStatus && matchesPriority && matchesTodoOnly)
+                        );
+                    });
+
+                    const sortDirection = sortFilter?.value || "earliest";
+                    entries.sort(function (a, b) {
+                        const aTime = Date.parse(a.dataset.deadline || "") || Number.MAX_SAFE_INTEGER;
+                        const bTime = Date.parse(b.dataset.deadline || "") || Number.MAX_SAFE_INTEGER;
+                        return sortDirection === "latest" ? bTime - aTime : aTime - bTime;
+                    });
+
+                    entries.forEach(function (entry) {
+                        taskList.appendChild(entry);
+                    });
+                }
+
+                if (applyFilter) applyFilter.addEventListener("click", applyTaskFilters);
+                if (todoOnly) todoOnly.addEventListener("change", applyTaskFilters);
+
+                if (clearFilter) {
+                    clearFilter.addEventListener("click", function () {
+                        if (keywordInput) keywordInput.value = "";
+                        if (assignedFilter) assignedFilter.value = "";
+                        if (statusFilter) statusFilter.value = "";
+                        if (priorityFilter) priorityFilter.value = "";
+                        if (sortFilter) sortFilter.value = "earliest";
+                        if (todoOnly) todoOnly.checked = false;
+                        applyTaskFilters();
+                    });
+                }
+
+                const chatMessages = document.getElementById("chat-messages");
+                if (chatMessages) {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            });
+        </script>
     </body>
 </html>

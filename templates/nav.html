@@ -14,10 +14,121 @@
         </div>
     </div>
 
-    <ul class="navlinks">
-        <li><a href="/">Tasks</a></li>
-        <li><a href="#">Groups</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
+    <div class="nav-right">
+        <ul class="navlinks">
+            {% if session.get("logged_in") %}
+                <li><a href="/logout">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+            {% endif %}
+        </ul>
+
+        {% if session.get("logged_in") %}
+            {% set display_username = username|default(session.get("username", "Guest"), true) %}
+            {% set current_pfp = profile_picture|default("None", true) %}
+
+            <label for="profile-picker-toggle" class="nav-user-profile">
+                <div class="nav-profile-pic">
+                    {% if current_pfp and current_pfp != "None" %}
+                        <img 
+                            src="{{ url_for('static', filename='icons/' ~ current_pfp) }}" 
+                            alt="Profile Picture"
+                        >
+                    {% else %}
+                        <span>{{ display_username[0]|upper }}</span>
+                    {% endif %}
+                </div>
+
+                <span class="nav-username">{{ display_username }}</span>
+            </label>
+        {% endif %}
+    </div>
+
+    {% if session.get("logged_in") %}
+        <!-- pfp popup toggle -->
+        <input type="checkbox" id="profile-picker-toggle" class="modal-toggle">
+
+        <!-- pfp picker popup -->
+        <div class="modal-overlay profile-picker-modal">
+            <div class="modal-card icon-picker-card">
+                <label for="profile-picker-toggle" class="modal-close">×</label>
+
+                <p class="eyebrow">Profile Picture</p>
+                <h2>Choose Your Icon</h2>
+
+                <p class="modal-description">
+                    Select an icon for your profile. If you choose None, your profile picture will show the first letter of your username.
+                </p>
+
+                <form action="/update_profile_picture" method="POST" class="profile-picker-form">
+                    <div class="icon-picker-grid profile-picker-grid">
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-none" 
+                            value="None"
+                            {% if current_pfp == "None" or not current_pfp %}checked{% endif %}
+                        >
+                        <label for="profile-icon-none" class="icon-choice-card profile-icon-choice">
+                            <div class="profile-initial-choice">
+                                {{ display_username[0]|upper }}
+                            </div>
+                            <span>None</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-smiling" 
+                            value="Furina_smiling.png"
+                            {% if current_pfp == "Furina_smiling.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-smiling" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='icons/Furina_smiling.png') }}"
+                                alt="Furina Smiling"
+                            >
+                            <span>Star</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-directing" 
+                            value="Furina_directing.png"
+                            {% if current_pfp == "Furina_directing.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-directing" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='icons/Furina_directing.png') }}"
+                                alt="Furina Directing"
+                            >
+                            <span>Director</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-teatime" 
+                            value="Furina_teatime.png"
+                            {% if current_pfp == "Furina_teatime.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-teatime" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='icons/Furina_teatime.png') }}"
+                                alt="Furina Tea Time"
+                            >
+                            <span>Tea Time</span>
+                        </label>
+                    </div>
+
+                    <div class="modal-actions icon-picker-actions">
+                        <button type="submit" class="cute-btn primary-action-btn">
+                            Save Icon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
 </nav>

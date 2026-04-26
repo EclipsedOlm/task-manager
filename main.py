@@ -1,19 +1,88 @@
 # Imports: 
-from flask import Flask, render_template, request, redirect, url_for, session # Flask functionality
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify # Flask functionality
 from db_funcs import * # Database functionality
 
 app = Flask(__name__) # Create the Flask app
 app.secret_key = "temporary_secret_key"
 
+#Ikik it's hardcoded but GIMME A BREAK ITS 3AM
+#If you feel like it you can add a folder search and check ig
+pfp_list = [
+    "None",
+    "Furina_smiling.png",
+    "Furina_directing.png",
+    "Furina_teatime.png"
+]
+
+#This is an empty check to prevent crashes (there're prob better ways but im too lazy)
+def to_list(data):
+    if data is None:
+        return []
+    return data
+
+#I'm paranoid lel
+def check_profile_picture(profile_data):
+    try:
+      if profile_data is None:
+          return "None"
+      if isinstance(profile_data, str) and profile_data in pfp_list:
+          return profile_data if profile_data else "None"
+      else:
+          return None
+    except Exception:
+        return "None"
+
+def get_value(row, key, default=None):
+    if row is None:
+        return default
+    try:
+        return dict(row).get(key, default)
+    except Exception:
+        return default
+
+
 
 # Main homepage
 @app.route("/", methods=["GET", "POST"])
-def index():
+def redir():
+    return redirect(url_for("home")) #this just redirects just leave it
+
+
+@app.route("/home", methods=["GET", "POST"])
+def home():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
 
-    return render_template("newindex.html")
+    username = session["username"]
 
+    #trying to get all the db info here
+    user_data = retrieveUser(username)
+    user_groups = to_list(retrieveGroupsForUser(username))
+    all_groups = to_list(retrieveAllGroups())
+    tasks = to_list(retrieveTasksForUser(username))
+    chat_history = to_list(getChatHistory())
+    profile_picture = check_profile_picture(getProfilePicture(username))
+
+    members_by_group = {}
+
+    for group in user_groups:
+        group_name = get_value(group, "group_name")
+
+        if group_name is not None:
+            members_by_group[group_name] = to_list(retrieveMembersByGroup(group_name))
+
+    #Send all these info to the html file
+    return render_template(
+        "newindex.html",
+        username=username,
+        user_data=user_data,
+        user_groups=user_groups,
+        all_groups=all_groups,
+        tasks=tasks,
+        chat_history=chat_history,
+        profile_picture=profile_picture,
+        members_by_group=members_by_group
+    )
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -31,7 +100,7 @@ def login():
                 # Logic for correct password and username
                 session["logged_in"] = True
                 session["username"] = username
-                return redirect(url_for("index"))
+                return redirect(url_for("home"))
             else:
                 # Logic for wrong password
                 pass
@@ -39,15 +108,21 @@ def login():
     return render_template("login.html")
 
 
+#I think this is fine (To get in just put "admin" in register username and anything in passwords)
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
-        # Temporary register logic:
-        # Do nothing with the account for now.
-        return redirect(url_for("login"))
+        result = insertUser(username, password, False)
+
+        if result == "success":
+            session["logged_in"] = True
+            session["username"] = username
+            return redirect(url_for("home"))
+        else:
+            return render_template("register.html", error="Username already exists.")
 
     return render_template("register.html")
 
@@ -56,6 +131,179 @@ def register():
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+#These are gonna be the functions (hopeful sth dont self-destruct)
+@app.route("/create_troupe", methods=["POST"])
+def create_troupe():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+
+    group_name = request.form["group_name"]
+    group_desc = request.form.get("group_desc", "")
+
+    result = insertGroup(group_name, group_desc)
+
+    if result == "success":
+        addUserToGroup(username, group_name)
+
+    return redirect(url_for("home"))
+
+
+@app.route("/join_troupe", methods=["POST"])
+def join_troupe():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    group_name = request.form["group_name"]
+
+    addUserToGroup(username, group_name)
+
+    return redirect(url_for("home"))
+
+
+@app.route("/add_performance", methods=["POST"])
+def add_performance():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    created_by = session["username"]
+
+    group_name = request.form["group_name"]
+    title = request.form["title"]
+    description = request.form.get("description", "")
+    assigned_to = request.form["assigned_to"]
+    priority = request.form.get("priority", "Medium")
+    deadline = request.form.get("deadline", "")
+    icon = request.form.get("performance_icon", "🎼")
+    status = request.form.get("status", "Not Started")
+
+    insertTask(
+        title,
+        description,
+        assigned_to,
+        created_by,
+        status,
+        priority,
+        deadline,
+        icon,
+        group_name
+    )
+
+    return redirect(url_for("home"))
+
+
+@app.route("/delete_task/<int:task_id>", methods=["POST"])
+def delete_task(task_id):
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    deleteTask(task_id)
+
+    return redirect(url_for("home"))
+
+
+@app.route("/edit_task/<int:task_id>", methods=["POST"])
+def edit_task(task_id):
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+
+    task_data = getTaskInfo(task_id)
+
+    if len(task_data) == 0:
+        # Task does not exist
+        return redirect(url_for("home"))
+
+    #this is correct right?? im sleep deprived lmao
+    task = dict(task_data[0])
+
+    # only the og creator is allowed to edit full task details
+    if task["created_by"] != username:
+        return redirect(url_for("home"))
+
+    title = request.form["title"]
+    description = request.form.get("description", "")
+    assigned_to = request.form["assigned_to"]
+    status = request.form.get("status", "Not Started")
+    priority = request.form.get("priority", "Medium")
+    deadline = request.form.get("deadline", "")
+    icon = request.form.get("performance_icon", "🎼")
+
+    editTask(
+        task_id,
+        title,
+        description,
+        assigned_to,
+        task["created_by"],
+        status,
+        priority,
+        deadline,
+        icon
+    )
+
+    return redirect(url_for("home"))
+
+
+@app.route("/update_task_status/<int:task_id>", methods=["POST"])
+def update_task_status(task_id):
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    status = request.form.get("status", "Not Started")
+
+    updateTaskStatus(task_id, status)
+
+    return redirect(url_for("home"))
+
+
+@app.route("/update_profile_picture", methods=["POST"])
+def update_profile_picture():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    profile_picture = request.form.get("profile_picture", "None")
+
+    updateProfilePicture(username, profile_picture)
+
+    return redirect(url_for("home"))
+
+
+@app.route("/send_message", methods=["POST"])
+def send_message():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    message = request.form.get("message", "").strip()
+
+    if message:
+        sendMessage(username, message)
+
+    return redirect(url_for("home"))
+
+
+#this is for the dynamic drop down when you choose a group the members changes too (I hope at least) so we pass a .json for the javascript
+@app.route("/members/<group_name>")
+def members(group_name):
+    if not session.get("logged_in"):
+        return jsonify([])
+
+    group_members = to_list(retrieveMembersByGroup(group_name))
+
+    result = []
+
+    for member in group_members:
+        member_username = get_value(member, "username")
+
+        if member_username is not None:
+            result.append(member_username)
+
+    return jsonify(result)
 
 
 if __name__ == "__main__":
