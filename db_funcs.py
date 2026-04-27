@@ -53,9 +53,9 @@ def retrieveGroup(group_name: str):
     return cursor.fetchall()
 
 
-def insertGroup(group_name: str, group_desc: str):
+def insertGroup(group_name: str, group_desc: str, group_icon: str, group_password: str):
     if(len(retrieveGroup(group_name)) == 0):
-        cursor.execute("INSERT INTO groups(group_name, group_description) VALUES (%s,%s)", (group_name, group_desc))
+        cursor.execute("INSERT INTO groups(group_name, group_description, group_icon, group_password) VALUES (%s,%s,%s,%s)", (group_name, group_desc, group_icon, group_password))
         conn.commit()
         return "success"
     else:
@@ -103,7 +103,7 @@ def retrieveAllGroups():
 def retrieveMembersByGroup(group_name:str):
     group_data = retrieveGroup(group_name)
 
-    #black magic happens here giving me all the members from the group
+    #black magic happens here giving me all the members from the group or elseee!!!
 
     #return cursor.fetchall()
 
@@ -191,3 +191,4 @@ def getChatHistory():
     #Get the entire chat/msg db ig
 
     #return cursor.fetchall()
+
