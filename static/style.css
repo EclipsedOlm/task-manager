@@ -1716,6 +1716,7 @@ nav {
 }
 
 .task-icon img,
+.troupe-icon img,
 .modal-icon img,
 .chosen-icon-preview img {
   width: 100%;
@@ -1782,8 +1783,15 @@ nav {
   font-size: 13px;
 }
 
-.join-troupe-card form {
+.join-troupe-form {
   margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.join-troupe-form input {
+  width: 100%;
 }
 
 #clear-filter-btn {
