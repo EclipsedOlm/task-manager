@@ -112,7 +112,7 @@ def retrieveMembersByGroup(group_name: str):
     return cursor.fetchall()
 
 
-def retrieveTasksForUser(username:str):
+def retrieveTasksForUser(username: str):
     user_data = retrieveUser(username)
     if(len(user_data) == 0):
         return "user_not_found"
@@ -122,28 +122,66 @@ def retrieveTasksForUser(username:str):
     return cursor.fetchall()
 
 
-def getTaskInfo(task_id: int):
-    #get all the task info should be a one liner
+def getTaskInfo(task_id: str):
+    cursor.execute("SELECT * FROM tasks WHERE task_id = task_id")
     return cursor.fetchall()
 
 
-def insertTask(title:str,description:str,assigned_to:str,created_by:str,status:str,priority:str,deadline:str,icon:str,group_name:str):
+def insertTask(title: str, description: str, assigned_to: str, created_by: str, group_name: str, 
+               status: str, priority: str, deadline: str, icon: str):
+    create_user = retrieveUser(created_by)
+    if(len(create_user) == 0):
+        return "create_user_not_found"
+    create_user_id = dict(create_user[0])["user_id"]
+
+    assign_user = retrieveUser(assigned_to)
+    if(len(assign_user) == 0):
+        return "assign_user_not_found"
+    assign_user_id = dict(assign_user[0])["user_id"]
+
     group_data = retrieveGroup(group_name)
+    if(len(group_data) == 0):
+        return "group_not_found"
+    group_id = dict(group_data[0])["group_id"]
 
-    #dump all these info into the db
-    #VERY IMPORTANT YOU NEED A task_id COLUMN GENERATE IT HERE IF YOU WISH
+    # Note task_id is generated automatically
+    cursor.execute("""INSERT INTO
+                      tasks(user_crated_id, user_assigned_id, group_id, task_name, task_description, status, priority, deadline, icon) 
+                      VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                      (create_user_id, assign_user_id, group_id, title, description, status, priority, deadline, icon))
+    conn.commit()
+    return "success"
 
-    #conn.commit()
-    #return "success"
 
+def deleteTask(task_id: int, username: str, override=False):
+    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
+    tasks = cursor.fetchall() # Should by right either be length 0 or 1 only: unique task id
+    if(len(tasks) == 0):
+        return "task_not_found"
 
-def deleteTask(task_id:int):
-    pass
-    #delete
-    #wait lowkey wouldn't it be cool if only the creator can delete the task
-
-    #conn.commit()
-    #return "success"
+    # Override is whether one wants to bypass condition of user being admin or having created the task, to have perms to delete it
+    if(override):
+        cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id))
+        conn.commit()
+        return "success"
+    
+    # Else, to delete...
+    # check whether username is admin or is task creator!
+    user_data = retrieveUser(username)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    deletion_ability = dict(user_data[0])["admin"] # If false, nvm, check whether task creator
+    user_id = dict(user_data[0])["user_id"]
+    task_creator_id = dict(tasks[0])["user_created_id"]
+    if(not deletion_ability): # If not already True, then check
+        deletion_ability = (user_id == task_creator_id) # if user is the one who created the task, then he can delete it
+    
+    if(deletion_ability):
+        cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id))
+        conn.commit()
+        return "success"
+    else:
+        return "user_no_perms"
 
 
 def editTask(task_id:int,title:str,description:str,assigned_to:str,created_by:str,status:str,priority:str,deadline:str,icon:str):
