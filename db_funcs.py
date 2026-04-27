@@ -81,39 +81,45 @@ def addUserToGroup(username, group_name):
     return "success"
 
 
-# Some functions I plan to do in the future but idk if yall need. so lmk what functions yall need
-# ESPECIALLy i need to know what info i will have, then i can make the relevant queries to get data to insert
-
-#Wait let me help you out here I think these are the things I'd need for now and the info you get (with types)
-def retrieveGroupsForUser(username:str):
+def retrieveGroupsForUser(username: str):
     user_data = retrieveUser(username)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    user_id = dict(user_data[0])['user_id']
 
-    #some magic happens here
-
-    #return cursor.fetchall() then I get all the groups
+    cursor.execute("""SELECT groups.* 
+                      FROM groups INNER JOIN users_groups 
+                      ON groups.group_id = users_groups.group_id
+                      WHERE users_groups.user_id = %s""", (user_id,))
+    return cursor.fetchall()
 
 
 def retrieveAllGroups():
-    pass
-    #Just dump lol select all or sth
-
-    #return cursor.fetchall()
+    cursor.execute("SELECT * FROM groups")
+    return cursor.fetchall()
 
 
-def retrieveMembersByGroup(group_name:str):
+def retrieveMembersByGroup(group_name: str):
     group_data = retrieveGroup(group_name)
+    if(len(group_data) == 0):
+        return "group_not_found"
+    group_id = dict(group_data[0])["group_id"]
 
-    #black magic happens here giving me all the members from the group or elseee!!!
-
-    #return cursor.fetchall()
+    cursor.execute("""SELECT users.username 
+                      FROM users INNER JOIN users_groups
+                      ON users.user_id = users_groups.user_id
+                      WHERE users_groups.group_id = %s""", (group_id,))
+    return cursor.fetchall()
 
 
 def retrieveTasksForUser(username:str):
     user_data = retrieveUser(username)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    user_id = dict(user_data[0])["user_id"]
 
-    #gimme all the task of the user (wait lowkey i should put this behind insert task lol)
-
-    #return cursor.fetchall()
+    cursor.execute("SELECT * FROM tasks WHERE user_created_id = %s", (user_id,))
+    return cursor.fetchall()
 
 
 def getTaskInfo(task_id: int):
