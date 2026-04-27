@@ -142,8 +142,10 @@ def create_troupe():
 
     group_name = request.form["group_name"]
     group_desc = request.form.get("group_desc", "")
+    group_icon = request.form.get("group_icon", "🎩")
+    group_password = request.form.get("group_password", "")
 
-    result = insertGroup(group_name, group_desc)
+    result = insertGroup(group_name, group_desc, group_icon, group_password)
 
     if result == "success":
         addUserToGroup(username, group_name)
@@ -158,8 +160,17 @@ def join_troupe():
 
     username = session["username"]
     group_name = request.form["group_name"]
+    group_password = request.form.get("group_password", "")
 
-    addUserToGroup(username, group_name)
+    group_data = retrieveGroup(group_name)
+
+    if len(group_data) == 0:
+        return redirect(url_for("home"))
+
+    group = dict(group_data[0])
+
+    if group_password == group.get("group_password", ""):
+        addUserToGroup(username, group_name)
 
     return redirect(url_for("home"))
 
