@@ -15,10 +15,9 @@ body {
   margin: 0;
   font-family: "Nunito", "Trebuchet MS", sans-serif;
   color: var(--furina-white);
-  background: #a0a0a0 url("/static/background.webp");
+  background: url("/static/background.webp"), linear-gradient(#a0a0a0)/*workaround because the color doesnt stick when you "overscroll". idk bro dont question*/;
   background-attachment: fixed;
   background-size: cover;
-  background-position: center;
   background-blend-mode: multiply;
   overflow-x: hidden;
 }
