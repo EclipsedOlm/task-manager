@@ -275,7 +275,7 @@
 
                     <div class="scroll-frame troupe-scroll">
                         <!--
-                            Place holders again, we needa get the groups from db here
+                            Sigma loop
                         -->
 
                         {% if user_groups %}
@@ -284,7 +284,13 @@
                                     <input type="checkbox" id="troupe-detail-toggle-{{ loop.index }}" class="modal-toggle troupe-modal-toggle">
 
                                     <label for="troupe-detail-toggle-{{ loop.index }}" class="troupe-card">
-                                        <div class="troupe-icon">🎩</div>
+                                        <div class="troupe-icon">
+                                            {% if group.group_icon and '.png' in group.group_icon %}
+                                                <img src="{{ url_for('static', filename='icons/' ~ group.group_icon) }}" alt="Troupe Icon">
+                                            {% else %}
+                                                {{ group.group_icon|default('🎩', true) }}
+                                            {% endif %}
+                                        </div>
                                         <h3>{{ group.group_name }}</h3>
                                         <p>{{ members_by_group.get(group.group_name, [])|length }} performers</p>
                                     </label>
@@ -294,7 +300,13 @@
                                             <label for="troupe-detail-toggle-{{ loop.index }}" class="modal-close">×</label>
 
                                             <div class="modal-title-row">
-                                                <div class="modal-icon">🎩</div>
+                                                <div class="modal-icon">
+                                                    {% if group.group_icon and '.png' in group.group_icon %}
+                                                        <img src="{{ url_for('static', filename='icons/' ~ group.group_icon) }}" alt="Troupe Icon">
+                                                    {% else %}
+                                                        {{ group.group_icon|default('🎩', true) }}
+                                                    {% endif %}
+                                                </div>
                                                 <div>
                                                     <p class="eyebrow">Troupe Details</p>
                                                     <h2>{{ group.group_name }}</h2>
@@ -576,6 +588,16 @@
                     <label>Group Description</label>
                     <textarea name="group_desc" rows="4" placeholder="What is this troupe for?"></textarea>
 
+                    <label>Group Password</label>
+                    <input 
+                        type="password" 
+                        name="group_password" 
+                        placeholder="Create a troupe password..." 
+                        required
+                        oninvalid="this.setCustomValidity('You do not want randos joining your troupe do you?')"
+                        oninput="this.setCustomValidity('')"
+                    >
+
                     <button type="submit" class="cute-btn primary-action-btn">
                         Create Troupe
                     </button>
@@ -603,11 +625,25 @@
 
                             {% if not ns.already_joined %}
                                 <div class="join-troupe-card">
-                                    <div class="troupe-icon">🎩</div>
+                                    <div class="troupe-icon">
+                                        {% if group.group_icon and '.png' in group.group_icon %}
+                                            <img src="{{ url_for('static', filename='icons/' ~ group.group_icon) }}" alt="Troupe Icon">
+                                        {% else %}
+                                            {{ group.group_icon|default('🎩', true) }}
+                                        {% endif %}
+                                    </div>
                                     <h3>{{ group.group_name }}</h3>
                                     <p>{{ group.group_description|default('No troupe description yet.', true) }}</p>
-                                    <form action="/join_troupe" method="POST">
+                                    <form action="/join_troupe" method="POST" class="join-troupe-form">
                                         <input type="hidden" name="group_name" value="{{ group.group_name }}">
+                                        <input 
+                                            type="password" 
+                                            name="group_password" 
+                                            placeholder="Troupe password..." 
+                                            required
+                                            oninvalid="this.setCustomValidity('A password is needed to enter this troupe~')"
+                                            oninput="this.setCustomValidity('')"
+                                        >
                                         <button type="submit" class="cute-btn primary-action-btn">Join</button>
                                     </form>
                                 </div>
