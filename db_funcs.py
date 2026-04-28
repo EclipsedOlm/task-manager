@@ -184,20 +184,55 @@ def deleteTask(task_id: int, username: str, override=False):
         return "user_no_perms"
 
 
-def editTask(task_id:int,title:str,description:str,assigned_to:str,created_by:str,status:str,priority:str,deadline:str,icon:str):
-    pass
-    #update the changes (only creator should be able to do this (actually we might have to check this in main.py))
+def editTask(task_id: str, title: str, description: str, assigned_to: str, created_by: str, 
+             status: str, priority: str, deadline: str, icon: str, override=False):
+    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
+    tasks = cursor.fetchall() # Should by right either be length 0 or 1 only: unique task id
+    if(len(tasks) == 0):
+        return "task_not_found"
 
-    #conn.commit()
-    #return "success"
+    if(override):
+        cursor.execute("""UPDATE tasks
+                        SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
+                            status=%s, priority=%s, deadline=%s, icon=%s)
+                        WHERE task_id=%s""", 
+                        (created_by, assigned_to, title, description, status, priority, deadline, icon))
+        conn.commit()
+        return "success"
+    
+    # check whether username is admin or is task creator!
+    user_data = retrieveUser(created_by)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    edit_ability = dict(user_data[0])["admin"] # If false, nvm, check whether task creator
+    user_id = dict(user_data[0])["user_id"]
+    task_creator_id = dict(tasks[0])["user_created_id"]
+    if(not edit_ability): # If not already True, then check
+        edit_ability = (user_id == task_creator_id) # if user is the one who created the task, then he can delete it
+    
+    if(edit_ability):
+        cursor.execute("""UPDATE tasks
+                        SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
+                            status=%s, priority=%s, deadline=%s, icon=%s)
+                        WHERE task_id=%s""", 
+                        (created_by, assigned_to, title, description, status, priority, deadline, icon))
+        conn.commit()
+        return "success"
+    else:
+        return "user_no_perms"
 
 
-def updateTaskStatus(task_id:int,status:str):
-    pass
-    #update changes to the status of the task (anyone can do this)
-
-    #conn.commit()
-    #return "success"
+def updateTaskStatus(task_id: str, status: str):
+    cursor.execute("SELECT FROM tasks WHERE task_id = %s", (task_id,))
+    tasks = cursor.fetchall()
+    if(len(tasks) == 0):
+        return "task_not_found"
+    
+    cursor.execute("""UPDATE tasks
+                      SET status=%s
+                      WHERE task_id = %s""", (status, task_id))
+    conn.commit()
+    return "success"
 
 #Also ig we also need a delete group but it's not urgent ig we can just leave empty groups to die
 
