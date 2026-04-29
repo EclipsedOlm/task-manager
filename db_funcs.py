@@ -123,7 +123,7 @@ def retrieveTasksForUser(username: str):
 
 
 def getTaskInfo(task_id: str):
-    cursor.execute("SELECT * FROM tasks WHERE task_id = task_id")
+    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
     return cursor.fetchall()
 
 
@@ -193,10 +193,10 @@ def editTask(task_id: str, title: str, description: str, assigned_to: str, creat
 
     if(override):
         cursor.execute("""UPDATE tasks
-                        SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
-                            status=%s, priority=%s, deadline=%s, icon=%s)
-                        WHERE task_id=%s""", 
-                        (created_by, assigned_to, title, description, status, priority, deadline, icon))
+                          SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
+                          status=%s, priority=%s, deadline=%s, icon=%s)
+                          WHERE task_id=%s""", 
+                          (created_by, assigned_to, title, description, status, priority, deadline, icon))
         conn.commit()
         return "success"
     
@@ -212,10 +212,10 @@ def editTask(task_id: str, title: str, description: str, assigned_to: str, creat
     
     if(edit_ability):
         cursor.execute("""UPDATE tasks
-                        SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
-                            status=%s, priority=%s, deadline=%s, icon=%s)
-                        WHERE task_id=%s""", 
-                        (created_by, assigned_to, title, description, status, priority, deadline, icon))
+                          SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
+                          status=%s, priority=%s, deadline=%s, icon=%s)
+                          WHERE task_id=%s""", 
+                          (created_by, assigned_to, title, description, status, priority, deadline, icon))
         conn.commit()
         return "success"
     else:
@@ -223,38 +223,35 @@ def editTask(task_id: str, title: str, description: str, assigned_to: str, creat
 
 
 def updateTaskStatus(task_id: str, status: str):
-    cursor.execute("SELECT FROM tasks WHERE task_id = %s", (task_id,))
+    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
     tasks = cursor.fetchall()
     if(len(tasks) == 0):
         return "task_not_found"
-    
-    cursor.execute("""UPDATE tasks
-                      SET status=%s
-                      WHERE task_id = %s""", (status, task_id))
+    cursor.execute("UPDATE tasks SET status= %s WHERE task_id = %s", (status, task_id))
     conn.commit()
     return "success"
 
 #Also ig we also need a delete group but it's not urgent ig we can just leave empty groups to die
 
 
-def updateProfilePicture(username:str,profile_picture:str):
+def updateProfilePicture(username: str, profile_picture: str):
     user_data = retrieveUser(username)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    cursor.execute("UPDATE users SET profile_picture = %s WHERE username = %s", (username, profile_picture))
+    conn.commit()
+    return "success"
 
-    #update to db
 
-    #conn.commit()
-    #return "success"
-
-
-def getProfilePicture(username:str):
+def getProfilePicture(username: str):
     user_data = retrieveUser(username)
+    if(len(user_data) == 0):
+        return "user_not_found"
+    cursor.execute("SELECT profile_picture FROM users WHERE username = %s", (username,))
+    return cursor.fetchall()
 
-    #Get the pfp of the user (str)
 
-    #return cursor.fetchall()
-
-
-def sendMessage(username:str,message:str):
+def sendMessage(username: str, message: str):
     user_data = retrieveUser(username)
 
     #add to db (I think we the db can be [Index][Username/ID][Message])
