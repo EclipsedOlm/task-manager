@@ -26,6 +26,11 @@ cursor = conn.cursor(cursor_factory=RealDictCursor) # The cursor object is the o
 # Here lies the various functions that will be used
 # Yes I'll define datatypes explicitly because industry-ready: @furinafufu will just call this later
 
+# To all the future people reading this, apologies for how repetitive some code may seem
+# I'm sure I could cut down 100 lines with better modularisation
+# But doing that ain't gonna net me 1 more mark here (or in computing TPs for that matter) ~
+# Perhaps for another project!
+
 
 def retrieveUser(username: str):
     # Retrieve all users with the same name (should either be len 0 or 1 array returned)
@@ -110,6 +115,16 @@ def retrieveMembersByGroup(group_name: str):
                       ON users.user_id = users_groups.user_id
                       WHERE users_groups.group_id = %s""", (group_id,))
     return cursor.fetchall()
+
+
+def deleteGroup(group_name):
+    group_data = retrieveGroup(group_name)
+    if(len(group_data) == 0):
+        return "group_not_found"
+    
+    cursor.execute("DELETE FROM groups WHERE group_name = %s", (group_name,))
+    conn.commit()
+    return "success"
 
 
 def retrieveTasksForUser(username: str):
@@ -231,8 +246,6 @@ def updateTaskStatus(task_id: str, status: str):
     conn.commit()
     return "success"
 
-#Also ig we also need a delete group but it's not urgent ig we can just leave empty groups to die
-
 
 def updateProfilePicture(username: str, profile_picture: str):
     user_data = retrieveUser(username)
@@ -252,19 +265,25 @@ def getProfilePicture(username: str):
 
 
 def sendMessage(username: str, message: str):
-    user_data = retrieveUser(username)
+    # Purposely did not have foreign key link: username to users.username, because of the next_index row: might raise errors
+    if(len(message) == 0):
+        return "empty_message"
+    
+    # This isn't the best strategy (honestly should've been seconds since 2000 or smth like that) but...
+    # There is a row in the table that is {index: 0, username: NEXT_INDEX, message: (next index)}
+    # where (next_index) is the next free index for the next message
+    cursor.execute("SELECT message FROM messages WHERE username = %s", ("NEXT_INDEX",))
+    next_index = int(dict(cursor.fetchall()[0])["message"])
 
-    #add to db (I think we the db can be [Index][Username/ID][Message])
-    #Index basically determines the orders of the messages so when we try to get the chat history we know the order
+    # Insert the next message, and update next_index
+    cursor.execute("INSERT INTO messages(index, username, message) VALUES (%s, %s, %s)", (next_index, username, message))
+    cursor.execute("UPDATE messages SET message = %s WHERE username = %s", (str(next_index + 1), "NEXT_INDEX"))
 
-    #conn.commit()
-    #return "success"
+    conn.commit()
+    return "success"
 
 
 def getChatHistory():
-    pass
-
-    #Get the entire chat/msg db ig
-
-    #return cursor.fetchall()
-
+    # Select all messages except the one that just keeps track of the next index
+    cursor.execute("SELECT * FROM messages WHERE username <> %s", ("NEXT_INDEX",))
+    return cursor.fetchall()
