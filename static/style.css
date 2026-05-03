@@ -761,11 +761,21 @@ nav {
 
 /* Troupe cards!! aka the groups you are in */
 
+.troupe-entry {
+  min-width: 0;
+}
+
 .troupe-card,
 .join-troupe-card {
+  width: 100%;
   min-height: 155px;
   margin: 3px;
   padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
   border-radius: 24px;
   text-align: center;
   background:
@@ -790,17 +800,29 @@ nav {
   width: 64px;
   height: 64px;
   margin: 0 auto 10px;
+  flex-shrink: 0;
   font-size: 31px;
+  overflow: hidden;
+}
+
+.troupe-icon img,
+.modal-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .troupe-card h3,
 .join-troupe-card h3 {
+  width: 100%;
   margin: 7px 0 4px;
   color: var(--furina-white);
+  overflow-wrap: anywhere;
 }
 
 .troupe-card p,
 .join-troupe-card p {
+  width: 100%;
   margin: 0;
   color: var(--furina-muted);
 }
@@ -990,11 +1012,9 @@ nav {
   z-index: 9999;
 }
 
-#task-detail-toggle:checked ~ .task-detail-modal,
 #add-performance-toggle:checked ~ .add-performance-modal,
 #create-troupe-toggle:checked ~ .create-troupe-modal,
 #join-troupe-toggle:checked ~ .join-troupe-modal,
-#troupe-detail-toggle:checked ~ .troupe-detail-modal,
 #task-icon-picker-toggle:checked ~ .task-icon-picker-modal,
 #group-icon-picker-toggle:checked ~ .group-icon-picker-modal {
   display: grid;
@@ -1709,7 +1729,7 @@ nav {
   display: none !important;
 }
 
-.task-modal-toggle:checked + .performance-card + .task-detail-modal,
+.task-modal-toggle:checked + .task-detail-modal,
 .troupe-modal-toggle:checked + .troupe-card + .troupe-detail-modal {
   display: grid;
 }
@@ -1855,4 +1875,127 @@ nav {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+
+/* task detail modal size fix */
+
+.task-detail-modal {
+  position: fixed;
+  inset: 0;
+  place-items: start center;
+  padding: 130px 26px 30px;
+  overflow-y: auto;
+  z-index: 10020;
+}
+
+.task-detail-modal .modal-card.wide-modal {
+  width: min(720px, 92vw);
+  max-height: calc(100vh - 165px);
+  padding: 20px 22px 24px;
+}
+
+.task-detail-modal .modal-title-row {
+  margin-bottom: 8px;
+}
+
+.task-detail-modal .modal-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.task-detail-modal .modal-description {
+  margin: 8px 0 12px;
+  line-height: 1.45;
+}
+
+.task-detail-modal .detail-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.task-detail-modal .detail-grid div {
+  padding: 10px 12px;
+  min-height: auto;
+}
+
+.task-detail-modal .detail-grid span {
+  font-size: 11px;
+}
+
+.task-detail-modal .detail-grid strong {
+  font-size: 14px;
+}
+
+.task-detail-modal .status-update-box,
+.task-detail-modal .creator-edit-box,
+.task-detail-modal .creator-note {
+  margin-top: 12px;
+  padding: 12px;
+}
+
+.task-detail-modal .status-update-box h3,
+.task-detail-modal .creator-edit-box h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.task-detail-modal .inline-status-form {
+  gap: 8px;
+}
+
+.task-detail-modal .creator-edit-box {
+  max-height: 430px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 220, 255, 0.6) rgba(255, 255, 255, 0.06);
+}
+
+.task-detail-modal .pretty-form {
+  gap: 8px;
+}
+
+.task-detail-modal .pretty-form label {
+  margin-top: 3px;
+  font-size: 13px;
+}
+
+.task-detail-modal .pretty-form input,
+.task-detail-modal .pretty-form select {
+  padding: 10px 12px;
+}
+
+.task-detail-modal .pretty-form textarea {
+  min-height: 92px;
+  max-height: 140px;
+}
+
+.task-detail-modal .modal-actions {
+  margin-top: 4px;
+}
+
+@media (max-width: 760px) {
+  .task-detail-modal {
+    padding: 120px 14px 24px;
+  }
+
+  .task-detail-modal .modal-card.wide-modal {
+    width: min(560px, 94vw);
+    max-height: calc(100vh - 145px);
+  }
+
+  .task-detail-modal .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-detail-modal .creator-edit-box {
+    max-height: 440px;
+  }
+}
+
+.leave-troupe-form,
+.delete-task-form {
+  margin: 0;
 }

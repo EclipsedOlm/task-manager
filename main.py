@@ -18,6 +18,11 @@ pfp_list = [
 def to_list(data):
     if data is None:
         return []
+
+    # If a db function returns an error string like "user_not_found"
+    if isinstance(data, str):
+        return []
+
     return data
 
 #I'm paranoid lel
@@ -206,67 +211,95 @@ def add_performance():
     return redirect(url_for("home"))
 
 
-@app.route("/delete_task/<int:task_id>", methods=["POST"])
+@app.route("/delete_task/<task_id>", methods=["POST"])
 def delete_task(task_id):
     if not session.get("logged_in"):
         return redirect(url_for("login"))
 
-    deleteTask(task_id)
+    username = session["username"]
+
+    try:
+        task_data = getTaskInfo(task_id)
+
+        if len(task_data) == 0:
+            return redirect(url_for("home"))
+
+        task = dict(task_data[0])
+
+        # Only creator can delete the task
+        if task["created_by"] != username:
+            return redirect(url_for("home"))
+
+        deleteTask(task_id)
+
+    except Exception as error:
+        conn.rollback()
+        print("delete_task failed:", error)
 
     return redirect(url_for("home"))
 
 
-@app.route("/edit_task/<int:task_id>", methods=["POST"])
+@app.route("/edit_task/<task_id>", methods=["POST"])
 def edit_task(task_id):
     if not session.get("logged_in"):
         return redirect(url_for("login"))
 
     username = session["username"]
 
-    task_data = getTaskInfo(task_id)
+    try:
+        task_data = getTaskInfo(task_id)
 
-    if len(task_data) == 0:
-        # Task does not exist
-        return redirect(url_for("home"))
+        if len(task_data) == 0:
+            return redirect(url_for("home"))
 
-    #this is correct right?? im sleep deprived lmao
-    task = dict(task_data[0])
+        task = dict(task_data[0])
 
-    # only the og creator is allowed to edit full task details
-    if task["created_by"] != username:
-        return redirect(url_for("home"))
+        # Only the original creator is allowed to edit full task details
+        if task["created_by"] != username:
+            return redirect(url_for("home"))
 
-    title = request.form["title"]
-    description = request.form.get("description", "")
-    assigned_to = request.form["assigned_to"]
-    status = request.form.get("status", "Not Started")
-    priority = request.form.get("priority", "Medium")
-    deadline = request.form.get("deadline", "")
-    icon = request.form.get("performance_icon", "🎼")
+        title = request.form["title"]
+        description = request.form.get("description", "")
+        assigned_to = request.form["assigned_to"]
+        status = request.form.get("status", "Not Started")
+        priority = request.form.get("priority", "Medium")
 
-    editTask(
-        task_id,
-        title,
-        description,
-        assigned_to,
-        task["created_by"],
-        status,
-        priority,
-        deadline,
-        icon
-    )
+        # If user clears the date input, keep old deadline instead of sending ""
+        deadline = request.form.get("deadline") or task.get("deadline")
+
+        icon = request.form.get("performance_icon", "🎼")
+
+        editTask(
+            task_id,
+            title,
+            description,
+            assigned_to,
+            task["created_by"],
+            status,
+            priority,
+            deadline,
+            icon
+        )
+
+    except Exception as error:
+        conn.rollback()
+        print("edit_task failed:", error)
 
     return redirect(url_for("home"))
 
 
-@app.route("/update_task_status/<int:task_id>", methods=["POST"])
+@app.route("/update_task_status/<task_id>", methods=["POST"])
 def update_task_status(task_id):
     if not session.get("logged_in"):
         return redirect(url_for("login"))
 
     status = request.form.get("status", "Not Started")
 
-    updateTaskStatus(task_id, status)
+    try:
+        updateTaskStatus(task_id, status)
+    except Exception as error:
+        conn.rollback()
+        print("update_task_status failed:", error)
 
     return redirect(url_for("home"))
 
@@ -315,6 +348,23 @@ def members(group_name):
             result.append(member_username)
 
     return jsonify(result)
+
+
+@app.route("/leave_troupe", methods=["POST"])
+def leave_troupe():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    group_name = request.form["group_name"]
+
+    try:
+        removeUserFromGroup(username, group_name)
+    except Exception as error:
+        conn.rollback()
+        print("leave_troupe failed:", error)
+
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

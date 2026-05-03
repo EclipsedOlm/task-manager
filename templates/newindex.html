@@ -94,7 +94,6 @@
                                     data-priority="{{ task.priority|default('Medium', true) }}"
                                     data-deadline="{{ task.deadline|default('', true) }}"
                                 >
-                                    <input type="checkbox" id="task-detail-toggle-{{ task.task_id }}" class="modal-toggle task-modal-toggle">
 
                                     <label for="task-detail-toggle-{{ task.task_id }}" class="performance-card {{ task.priority|default('medium', true)|lower }}-priority-card">
                                         <div class="task-icon">
@@ -117,135 +116,6 @@
                                         </div>
                                     </label>
 
-                                    <div class="modal-overlay task-detail-modal">
-                                        <div class="modal-card wide-modal">
-                                            <label for="task-detail-toggle-{{ task.task_id }}" class="modal-close">×</label>
-
-                                            <div class="modal-title-row">
-                                                <div class="modal-icon">
-                                                    {% if task.icon and '.png' in task.icon %}
-                                                        <img src="{{ url_for('static', filename='icons/' ~ task.icon) }}" alt="Task Icon">
-                                                    {% else %}
-                                                        {{ task.icon|default('🎼', true) }}
-                                                    {% endif %}
-                                                </div>
-                                                <div>
-                                                    <p class="eyebrow">Performance Details</p>
-                                                    <h2>{{ task.title }}</h2>
-                                                </div>
-                                            </div>
-
-                                            <p class="modal-description">
-                                                {{ task.description|default('No description provided.', true) }}
-                                            </p>
-
-                                            <div class="detail-grid">
-                                                <div>
-                                                    <span>Assigned Member</span>
-                                                    <strong>{{ task.assigned_to }}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Created By</span>
-                                                    <strong>{{ task.created_by }}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Status</span>
-                                                    <strong>{{ task.status|default('Not Started', true) }}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Priority</span>
-                                                    <strong>{{ task.priority|default('Medium', true) }}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Deadline</span>
-                                                    <strong>{{ task.deadline|default('No deadline', true) }}</strong>
-                                                </div>
-
-                                                <div>
-                                                    <span>Troupe</span>
-                                                    <strong>{{ task.group_name|default('Unknown Troupe', true) }}</strong>
-                                                </div>
-                                            </div>
-
-                                            <div class="status-update-box">
-                                                <h3>Edit Status</h3>
-                                                <form action="/update_task_status/{{ task.task_id }}" method="POST" class="inline-status-form">
-                                                    <select name="status">
-                                                        <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
-                                                        <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-                                                        <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
-                                                    </select>
-
-                                                    <button type="submit" class="cute-btn secondary-btn">Update Status</button>
-                                                </form>
-                                            </div>
-
-                                            {% if task.created_by == username %}
-                                                <div class="creator-edit-box">
-                                                    <h3>Creator Controls</h3>
-                                                    <form action="/edit_task/{{ task.task_id }}" method="POST" class="pretty-form edit-task-form">
-                                                        <label>Task Name</label>
-                                                        <input type="text" name="title" value="{{ task.title }}" required>
-
-                                                        <label>Description</label>
-                                                        <textarea name="description" rows="4">{{ task.description }}</textarea>
-
-                                                        <label>Assigned Member</label>
-                                                        <select name="assigned_to" required>
-                                                            {% for group_name, members in members_by_group.items() %}
-                                                                <optgroup label="{{ group_name }}">
-                                                                    {% for member in members %}
-                                                                        <option value="{{ member.username }}" {% if member.username == task.assigned_to %}selected{% endif %}>{{ member.username }}</option>
-                                                                    {% endfor %}
-                                                                </optgroup>
-                                                            {% endfor %}
-                                                        </select>
-
-                                                        <label>Status</label>
-                                                        <select name="status">
-                                                            <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
-                                                            <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-                                                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
-                                                        </select>
-
-                                                        <label>Priority</label>
-                                                        <select name="priority">
-                                                            <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
-                                                            <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
-                                                            <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
-                                                        </select>
-
-                                                        <label>Icon</label>
-                                                        <select name="performance_icon">
-                                                            <option value="🎼" {% if task.icon == '🎼' %}selected{% endif %}>🎼 Music</option>
-                                                            <option value="🧁" {% if task.icon == '🧁' %}selected{% endif %}>🧁 Cake</option>
-                                                            <option value="💧" {% if task.icon == '💧' %}selected{% endif %}>💧 Hydro</option>
-                                                            <option value="🎭" {% if task.icon == '🎭' %}selected{% endif %}>🎭 Mask</option>
-                                                            <option value="👑" {% if task.icon == '👑' %}selected{% endif %}>👑 Crown</option>
-                                                            <option value="Furina_smiling.png" {% if task.icon == 'Furina_smiling.png' %}selected{% endif %}>Furina Star</option>
-                                                        </select>
-
-                                                        <label>Deadline</label>
-                                                        <input type="date" name="deadline" value="{{ task.deadline }}">
-
-                                                        <div class="modal-actions">
-                                                            <button type="submit" class="cute-btn primary-action-btn">Save Changes</button>
-                                                        </div>
-                                                    </form>
-
-                                                    <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form" onsubmit="return confirm('Delete this performance?');">
-                                                        <button type="submit" class="cute-btn danger-btn">Delete</button>
-                                                    </form>
-                                                </div>
-                                            {% else %}
-                                                <p class="creator-note">Only {{ task.created_by }} can edit the full performance details.</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
                                 </div>
                             {% endfor %}
                         {% else %}
@@ -331,7 +201,18 @@
                                             </div>
 
                                             <div class="modal-actions">
-                                                <button type="button" class="cute-btn danger-btn">Leave Troupe</button>
+                                                <form 
+                                                    action="/leave_troupe" 
+                                                    method="POST" 
+                                                    class="leave-troupe-form"
+                                                    onsubmit="return confirm('Leave this troupe? You can rejoin later if you know the password.');"
+                                                >
+                                                    <input type="hidden" name="group_name" value="{{ group.group_name }}">
+
+                                                    <button type="submit" class="cute-btn danger-btn">
+                                                        Leave Troupe
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -382,6 +263,10 @@
                                                 <div class="chat-avatar image-chat-avatar">
                                                     <img src="{{ url_for('static', filename='images/furina_pfp.png') }}" alt="Furina">
                                                 </div>
+                                            {% elif msg.profile_picture and msg.profile_picture != "None" %}
+                                                <div class="chat-avatar image-chat-avatar">
+                                                    <img src="{{ url_for('static', filename='icons/' ~ msg.profile_picture) }}" alt="{{ msg.username }} profile picture">
+                                                </div>
                                             {% else %}
                                                 <div class="chat-avatar">{{ msg.username[0]|upper }}</div>
                                             {% endif %}
@@ -393,7 +278,13 @@
                                         </div>
 
                                         {% if msg.username == username %}
-                                            <div class="chat-avatar">{{ username[0]|upper }}</div>
+                                            {% if profile_picture and profile_picture != "None" %}
+                                                <div class="chat-avatar image-chat-avatar">
+                                                    <img src="{{ url_for('static', filename='icons/' ~ profile_picture) }}" alt="Your profile picture">
+                                                </div>
+                                            {% else %}
+                                                <div class="chat-avatar">{{ username[0]|upper }}</div>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 {% endfor %}
@@ -492,6 +383,142 @@
                 </section>
             </aside>
         </main>
+
+        <!-- Task detail popups are outside the performance scroll so they do not get clipped -->
+        {% if tasks %}
+            {% for task in tasks %}
+        <input type="checkbox" id="task-detail-toggle-{{ task.task_id }}" class="modal-toggle task-modal-toggle">
+        <div class="modal-overlay task-detail-modal">
+            <div class="modal-card wide-modal">
+                <label for="task-detail-toggle-{{ task.task_id }}" class="modal-close">×</label>
+
+                <div class="modal-title-row">
+                    <div class="modal-icon">
+                        {% if task.icon and '.png' in task.icon %}
+                            <img src="{{ url_for('static', filename='icons/' ~ task.icon) }}" alt="Task Icon">
+                        {% else %}
+                            {{ task.icon|default('🎼', true) }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="eyebrow">Performance Details</p>
+                        <h2>{{ task.title }}</h2>
+                    </div>
+                </div>
+
+                <p class="modal-description">
+                    {{ task.description|default('No description provided.', true) }}
+                </p>
+
+                <div class="detail-grid">
+                    <div>
+                        <span>Assigned Member</span>
+                        <strong>{{ task.assigned_to }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Created By</span>
+                        <strong>{{ task.created_by }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Status</span>
+                        <strong>{{ task.status|default('Not Started', true) }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Priority</span>
+                        <strong>{{ task.priority|default('Medium', true) }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Deadline</span>
+                        <strong>{{ task.deadline|default('No deadline', true) }}</strong>
+                    </div>
+
+                    <div>
+                        <span>Troupe</span>
+                        <strong>{{ task.group_name|default('Unknown Troupe', true) }}</strong>
+                    </div>
+                </div>
+
+                <div class="status-update-box">
+                    <h3>Edit Status</h3>
+                    <form action="/update_task_status/{{ task.task_id }}" method="POST" class="inline-status-form">
+                        <select name="status">
+                            <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                            <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+
+                        <button type="submit" class="cute-btn secondary-btn">Update Status</button>
+                    </form>
+                </div>
+
+                {% if task.created_by == username %}
+                    <div class="creator-edit-box">
+                        <h3>Creator Controls</h3>
+                        <form action="/edit_task/{{ task.task_id }}" method="POST" class="pretty-form edit-task-form">
+                            <label>Task Name</label>
+                            <input type="text" name="title" value="{{ task.title }}" required>
+
+                            <label>Description</label>
+                            <textarea name="description" rows="4">{{ task.description }}</textarea>
+
+                            <label>Assigned Member</label>
+                            <select name="assigned_to" required>
+                                {% for group_name, members in members_by_group.items() %}
+                                    <optgroup label="{{ group_name }}">
+                                        {% for member in members %}
+                                            <option value="{{ member.username }}" {% if member.username == task.assigned_to %}selected{% endif %}>{{ member.username }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+
+                            <label>Status</label>
+                            <select name="status">
+                                <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                                <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                            </select>
+
+                            <label>Priority</label>
+                            <select name="priority">
+                                <option value="Low" {% if task.priority == 'Low' %}selected{% endif %}>Low</option>
+                                <option value="Medium" {% if task.priority == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="High" {% if task.priority == 'High' %}selected{% endif %}>High</option>
+                            </select>
+
+                            <label>Icon</label>
+                            <select name="performance_icon">
+                                <option value="🎼" {% if task.icon == '🎼' %}selected{% endif %}>🎼 Music</option>
+                                <option value="🧁" {% if task.icon == '🧁' %}selected{% endif %}>🧁 Cake</option>
+                                <option value="💧" {% if task.icon == '💧' %}selected{% endif %}>💧 Hydro</option>
+                                <option value="🎭" {% if task.icon == '🎭' %}selected{% endif %}>🎭 Mask</option>
+                                <option value="👑" {% if task.icon == '👑' %}selected{% endif %}>👑 Crown</option>
+                                <option value="Furina_smiling.png" {% if task.icon == 'Furina_smiling.png' %}selected{% endif %}>Furina Star</option>
+                            </select>
+
+                            <label>Deadline</label>
+                            <input type="date" name="deadline" value="{{ task.deadline }}" required>
+
+                            <div class="modal-actions">
+                                <button type="submit" class="cute-btn primary-action-btn">Save Changes</button>
+                            </div>
+                        </form>
+
+                        <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form" onsubmit="return confirm('Delete this performance?');">
+                            <button type="submit" class="cute-btn danger-btn">Delete</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <p class="creator-note">Only the creator can edit the full performance details.</p>
+                {% endif %}
+            </div>
+        </div>
+            {% endfor %}
+        {% endif %}
 
         <!-- Add performance popup -->
         <div class="modal-overlay add-performance-modal">

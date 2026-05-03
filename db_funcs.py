@@ -39,17 +39,20 @@ def retrieveUser(username: str):
 
 
 def insertUser(username: str, password: str, admin: bool):
-    if username == "admin":
-        return "success"
-    elif len(username) > 30 or len(password) > 30:
+    if len(username) > 30 or len(password) > 30:
         return "max_length_reached"
-    elif(len(retrieveUser(username)) == 0):
-        cursor.execute("INSERT INTO users(username, password, admin) VALUES (%s,%s)", (username, password, admin))
+
+    if len(retrieveUser(username)) == 0:
+        is_admin = True if username == "admin" else admin
+
+        cursor.execute(
+            "INSERT INTO users(username, password, admin) VALUES (%s,%s,%s)",
+            (username, password, is_admin)
+        )
         conn.commit()
         return "success"
-    else:
-        # There is a user with the same username!
-        return "name_conflict"
+
+    return "name_conflict"
 
 
 def retrieveGroup(group_name: str):
@@ -71,25 +74,39 @@ def insertGroup(group_name: str, group_desc: str, group_icon: str, group_passwor
 def addUserToGroup(username, group_name):
     # Get user data
     user_data = retrieveUser(username)
-    if(len(user_data) == 0):
+    if len(user_data) == 0:
         return "user_not_found"
-    
+
     # Get group data
     group_data = retrieveGroup(group_name)
-    if(len(group_data) == 0):
+    if len(group_data) == 0:
         return "group_not_found"
-    
-    # If both exist, then extract their IDs, and add new record in users_groups table
-    user_id, group_id = dict(user_data[0])['user_id'], dict(group_data[0])['group_id']
-    cursor.execute("INSERT INTO users_groups(user_id, group_id) VALUES (%s, %s)", (user_id, group_id))
+
+    user_id = dict(user_data[0])["user_id"]
+    group_id = dict(group_data[0])["group_id"]
+
+    # Prevent duplicate membership
+    cursor.execute(
+        "SELECT * FROM users_groups WHERE user_id = %s AND group_id = %s",
+        (user_id, group_id)
+    )
+
+    if len(cursor.fetchall()) > 0:
+        return "already_in_group"
+
+    cursor.execute(
+        "INSERT INTO users_groups(user_id, group_id) VALUES (%s, %s)",
+        (user_id, group_id)
+    )
+
     conn.commit()
     return "success"
 
 
 def retrieveGroupsForUser(username: str):
     user_data = retrieveUser(username)
-    if(len(user_data) == 0):
-        return "user_not_found"
+    if len(user_data) == 0:
+        return []
     user_id = dict(user_data[0])['user_id']
 
     cursor.execute("""SELECT groups.* 
@@ -107,7 +124,7 @@ def retrieveAllGroups():
 def retrieveMembersByGroup(group_name: str):
     group_data = retrieveGroup(group_name)
     if(len(group_data) == 0):
-        return "group_not_found"
+        return []
     group_id = dict(group_data[0])["group_id"]
 
     cursor.execute("""SELECT users.username 
@@ -129,112 +146,161 @@ def deleteGroup(group_name):
 
 def retrieveTasksForUser(username: str):
     user_data = retrieveUser(username)
-    if(len(user_data) == 0):
-        return "user_not_found"
+
+    if len(user_data) == 0:
+        return []
+
     user_id = dict(user_data[0])["user_id"]
 
-    cursor.execute("SELECT * FROM tasks WHERE user_created_id = %s", (user_id,))
+    cursor.execute("""
+        SELECT
+            tasks.task_id,
+            tasks.task_name AS title,
+            tasks.task_description AS description,
+            assigned_user.username AS assigned_to,
+            created_user.username AS created_by,
+            tasks.status,
+            tasks.priority,
+            tasks.deadline,
+            tasks.icon,
+            groups.group_name
+        FROM tasks
+        INNER JOIN groups
+            ON tasks.group_id = groups.group_id
+        INNER JOIN users_groups
+            ON groups.group_id = users_groups.group_id
+        INNER JOIN users AS assigned_user
+            ON tasks.user_assigned_id = assigned_user.user_id
+        INNER JOIN users AS created_user
+            ON tasks.user_created_id = created_user.user_id
+        WHERE users_groups.user_id = %s
+        ORDER BY tasks.deadline ASC NULLS LAST, tasks.task_id DESC
+    """, (user_id,))
+
     return cursor.fetchall()
 
 
-def getTaskInfo(task_id: str):
-    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
+def getTaskInfo(task_id: int):
+    cursor.execute("""
+        SELECT
+            tasks.task_id,
+            tasks.task_name AS title,
+            tasks.task_description AS description,
+            assigned_user.username AS assigned_to,
+            created_user.username AS created_by,
+            tasks.status,
+            tasks.priority,
+            tasks.deadline,
+            tasks.icon,
+            groups.group_name
+        FROM tasks
+        INNER JOIN groups
+            ON tasks.group_id = groups.group_id
+        INNER JOIN users AS assigned_user
+            ON tasks.user_assigned_id = assigned_user.user_id
+        INNER JOIN users AS created_user
+            ON tasks.user_created_id = created_user.user_id
+        WHERE tasks.task_id = %s
+    """, (task_id,))
+
     return cursor.fetchall()
 
 
-def insertTask(title: str, description: str, assigned_to: str, created_by: str, group_name: str, 
-               status: str, priority: str, deadline: str, icon: str):
+def insertTask(title: str, description: str, assigned_to: str, created_by: str, status: str, priority: str, deadline: str, icon: str, group_name: str):
+
     create_user = retrieveUser(created_by)
-    if(len(create_user) == 0):
+    if len(create_user) == 0:
         return "create_user_not_found"
-    create_user_id = dict(create_user[0])["user_id"]
 
     assign_user = retrieveUser(assigned_to)
-    if(len(assign_user) == 0):
+    if len(assign_user) == 0:
         return "assign_user_not_found"
-    assign_user_id = dict(assign_user[0])["user_id"]
 
     group_data = retrieveGroup(group_name)
-    if(len(group_data) == 0):
+    if len(group_data) == 0:
         return "group_not_found"
+
+    create_user_id = dict(create_user[0])["user_id"]
+    assign_user_id = dict(assign_user[0])["user_id"]
     group_id = dict(group_data[0])["group_id"]
 
-    # Note task_id is generated automatically
-    cursor.execute("""INSERT INTO
-                      tasks(user_crated_id, user_assigned_id, group_id, task_name, task_description, status, priority, deadline, icon) 
-                      VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                      (create_user_id, assign_user_id, group_id, title, description, status, priority, deadline, icon))
+    cursor.execute("""
+        INSERT INTO tasks
+        (user_created_id, user_assigned_id, group_id, task_name, task_description, status, priority, deadline, icon)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (
+        create_user_id,
+        assign_user_id,
+        group_id,
+        title,
+        description,
+        status,
+        priority,
+        deadline,
+        icon
+    ))
+
     conn.commit()
     return "success"
 
-
-def deleteTask(task_id: int, username: str, override=False):
+#this version should just work
+def deleteTask(task_id: int):
     cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
-    tasks = cursor.fetchall() # Should by right either be length 0 or 1 only: unique task id
-    if(len(tasks) == 0):
+    tasks = cursor.fetchall()
+
+    if len(tasks) == 0:
         return "task_not_found"
 
-    # Override is whether one wants to bypass condition of user being admin or having created the task, to have perms to delete it
-    if(override):
-        cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id))
-        conn.commit()
-        return "success"
-    
-    # Else, to delete...
-    # check whether username is admin or is task creator!
-    user_data = retrieveUser(username)
-    if(len(user_data) == 0):
-        return "user_not_found"
-    deletion_ability = dict(user_data[0])["admin"] # If false, nvm, check whether task creator
-    user_id = dict(user_data[0])["user_id"]
-    task_creator_id = dict(tasks[0])["user_created_id"]
-    if(not deletion_ability): # If not already True, then check
-        deletion_ability = (user_id == task_creator_id) # if user is the one who created the task, then he can delete it
-    
-    if(deletion_ability):
-        cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id))
-        conn.commit()
-        return "success"
-    else:
-        return "user_no_perms"
+    cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id,))
+    conn.commit()
+    return "success"
 
+#Some clean ups
+def editTask(task_id: int, title: str, description: str, assigned_to: str, created_by: str, status: str, priority: str, deadline: str, icon: str):
 
-def editTask(task_id: str, title: str, description: str, assigned_to: str, created_by: str, 
-             status: str, priority: str, deadline: str, icon: str, override=False):
-    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
-    tasks = cursor.fetchall() # Should by right either be length 0 or 1 only: unique task id
-    if(len(tasks) == 0):
+    task_data = getTaskInfo(task_id)
+    if len(task_data) == 0:
         return "task_not_found"
+    task = dict(task_data[0])
 
-    if(override):
-        cursor.execute("""UPDATE tasks
-                          SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
-                          status=%s, priority=%s, deadline=%s, icon=%s)
-                          WHERE task_id=%s""", 
-                          (created_by, assigned_to, title, description, status, priority, deadline, icon))
-        conn.commit()
-        return "success"
-    
-    # check whether username is admin or is task creator!
-    user_data = retrieveUser(created_by)
-    if(len(user_data) == 0):
-        return "user_not_found"
-    edit_ability = dict(user_data[0])["admin"] # If false, nvm, check whether task creator
-    user_id = dict(user_data[0])["user_id"]
-    task_creator_id = dict(tasks[0])["user_created_id"]
-    if(not edit_ability): # If not already True, then check
-        edit_ability = (user_id == task_creator_id) # if user is the one who created the task, then he can delete it
-    
-    if(edit_ability):
-        cursor.execute("""UPDATE tasks
-                          SET user_crated_id=%s, user_assigned_id=%s, task_name=%s, task_description=%s, 
-                          status=%s, priority=%s, deadline=%s, icon=%s)
-                          WHERE task_id=%s""", 
-                          (created_by, assigned_to, title, description, status, priority, deadline, icon))
-        conn.commit()
-        return "success"
-    else:
+    # Only creator can edit
+    if task["created_by"] != created_by:
         return "user_no_perms"
+    create_user = retrieveUser(created_by)
+    if len(create_user) == 0:
+        return "create_user_not_found"
+    assign_user = retrieveUser(assigned_to)
+    if len(assign_user) == 0:
+        return "assign_user_not_found"
+    create_user_id = dict(create_user[0])["user_id"]
+    assign_user_id = dict(assign_user[0])["user_id"]
+
+    cursor.execute("""
+        UPDATE tasks
+        SET
+            user_created_id = %s,
+            user_assigned_id = %s,
+            task_name = %s,
+            task_description = %s,
+            status = %s,
+            priority = %s,
+            deadline = %s,
+            icon = %s
+        WHERE task_id = %s
+    """, (
+        create_user_id,
+        assign_user_id,
+        title,
+        description,
+        status,
+        priority,
+        deadline,
+        icon,
+        task_id
+    ))
+
+    conn.commit()
+    return "success"
 
 
 def updateTaskStatus(task_id: str, status: str):
@@ -249,41 +315,100 @@ def updateTaskStatus(task_id: str, status: str):
 
 def updateProfilePicture(username: str, profile_picture: str):
     user_data = retrieveUser(username)
-    if(len(user_data) == 0):
+    if len(user_data) == 0:
         return "user_not_found"
-    cursor.execute("UPDATE users SET profile_picture = %s WHERE username = %s", (username, profile_picture))
+    cursor.execute(
+        "UPDATE users SET profile_picture = %s WHERE username = %s",
+        (profile_picture, username)
+    )
     conn.commit()
     return "success"
 
 
 def getProfilePicture(username: str):
     user_data = retrieveUser(username)
-    if(len(user_data) == 0):
-        return "user_not_found"
-    cursor.execute("SELECT profile_picture FROM users WHERE username = %s", (username,))
-    return cursor.fetchall()
+    if len(user_data) == 0:
+        return "None"
+    cursor.execute(
+        "SELECT profile_picture FROM users WHERE username = %s",(username,))
+    result = cursor.fetchall()
+    if len(result) == 0:
+        return "None"
+    profile_picture = dict(result[0]).get("profile_picture")
+    if profile_picture is None or profile_picture == "":
+        return "None"
+    return profile_picture
 
 
 def sendMessage(username: str, message: str):
-    # Purposely did not have foreign key link: username to users.username, because of the next_index row: might raise errors
-    if(len(message) == 0):
+    if len(message.strip()) == 0:
         return "empty_message"
     
     # This isn't the best strategy (honestly should've been seconds since 2000 or smth like that) but...
     # There is a row in the table that is {index: 0, username: NEXT_INDEX, message: (next index)}
     # where (next_index) is the next free index for the next message
-    cursor.execute("SELECT message FROM messages WHERE username = %s", ("NEXT_INDEX",))
-    next_index = int(dict(cursor.fetchall()[0])["message"])
-
-    # Insert the next message, and update next_index
-    cursor.execute("INSERT INTO messages(index, username, message) VALUES (%s, %s, %s)", (next_index, username, message))
-    cursor.execute("UPDATE messages SET message = %s WHERE username = %s", (str(next_index + 1), "NEXT_INDEX"))
-
+    cursor.execute(
+        "SELECT message FROM messages WHERE username = %s",("NEXT_INDEX",))
+    result = cursor.fetchall()
+    if len(result) == 0:
+        next_index = 1
+        cursor.execute('INSERT INTO messages("index", username, message) VALUES (%s, %s, %s)',(0, "NEXT_INDEX", str(next_index)))
+    else:
+        next_index = int(dict(result[0])["message"])
+    cursor.execute(
+        'INSERT INTO messages("index", username, message) VALUES (%s, %s, %s)',(next_index, username, message))
+    cursor.execute(
+        "UPDATE messages SET message = %s WHERE username = %s",(str(next_index + 1), "NEXT_INDEX"))
     conn.commit()
     return "success"
 
 
 def getChatHistory():
-    # Select all messages except the one that just keeps track of the next index
-    cursor.execute("SELECT * FROM messages WHERE username <> %s", ("NEXT_INDEX",))
+    cursor.execute("""
+        SELECT
+            messages.username,
+            messages.message,
+            COALESCE(users.profile_picture, 'None') AS profile_picture
+        FROM messages
+        LEFT JOIN users
+            ON messages.username = users.username
+        WHERE messages.username <> %s
+        ORDER BY messages."index" ASC
+    """, ("NEXT_INDEX",))
     return cursor.fetchall()
+
+def removeUserFromGroup(username: str, group_name: str):
+    user_data = retrieveUser(username)
+    if len(user_data) == 0:
+        return "user_not_found"
+
+    group_data = retrieveGroup(group_name)
+    if len(group_data) == 0:
+        return "group_not_found"
+
+    user_id = dict(user_data[0])["user_id"]
+    group_id = dict(group_data[0])["group_id"]
+
+    cursor.execute(
+        "DELETE FROM users_groups WHERE user_id = %s AND group_id = %s",
+        (user_id, group_id)
+    )
+
+    if cursor.rowcount == 0:
+        conn.commit()
+        return "not_in_group"
+
+    # If this was the last member, clean up the empty troupe too.
+    cursor.execute(
+        "SELECT COUNT(*) AS member_count FROM users_groups WHERE group_id = %s",
+        (group_id,)
+    )
+    member_count = dict(cursor.fetchall()[0])["member_count"]
+
+    if member_count == 0:
+        # Remove tasks in the empty troupe first so foreign key links do not block deletion.
+        cursor.execute("DELETE FROM tasks WHERE group_id = %s", (group_id,))
+        cursor.execute("DELETE FROM groups WHERE group_id = %s", (group_id,))
+
+    conn.commit()
+    return "success"
