@@ -18,6 +18,35 @@
         <input type="checkbox" id="task-icon-picker-toggle" class="modal-toggle">
         <input type="checkbox" id="group-icon-picker-toggle" class="modal-toggle">
 
+
+        <!-- Small toast notifications after successful actions -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="furina-toast-stack" id="furina-toast-stack">
+                    {% for category, message in messages %}
+                        <div class="furina-toast {{ category }}" data-timeout="3600">
+                            <div class="furina-toast-icon">
+                                {% if category == "error" %}
+                                    !
+                                {% elif category == "info" %}
+                                    ✦
+                                {% else %}
+                                    ✓
+                                {% endif %}
+                            </div>
+
+                            <div class="furina-toast-content">
+                                <p class="furina-toast-title">{{ message }}</p>
+                                <p class="furina-toast-subtitle">Furina has updated the stage notes.</p>
+                            </div>
+
+                            <button type="button" class="furina-toast-close" aria-label="Dismiss notification">×</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <style>
             /* Make every task/troupe icon choice show the same selected effect, including newly added PNG icons */
             .icon-picker-grid input[type="radio"]:checked + .icon-choice-card {
@@ -176,8 +205,6 @@
                         {% if user_groups %}
                             {% for group in user_groups %}
                                 <div class="troupe-entry">
-                                    <input type="checkbox" id="troupe-detail-toggle-{{ loop.index }}" class="modal-toggle troupe-modal-toggle">
-
                                     <label for="troupe-detail-toggle-{{ loop.index }}" class="troupe-card">
                                         <div class="troupe-icon">
                                             {% if group.group_icon and '.png' in group.group_icon %}
@@ -190,57 +217,6 @@
                                         <p>{{ members_by_group.get(group.group_name, [])|length }} performers</p>
                                     </label>
 
-                                    <div class="modal-overlay troupe-detail-modal">
-                                        <div class="modal-card">
-                                            <label for="troupe-detail-toggle-{{ loop.index }}" class="modal-close">×</label>
-
-                                            <div class="modal-title-row">
-                                                <div class="modal-icon">
-                                                    {% if group.group_icon and '.png' in group.group_icon %}
-                                                        <img src="{{ url_for('static', filename='icons/' ~ group.group_icon) }}" alt="Troupe Icon">
-                                                    {% else %}
-                                                        {{ group.group_icon|default('🎩', true) }}
-                                                    {% endif %}
-                                                </div>
-                                                <div>
-                                                    <p class="eyebrow">Troupe Details</p>
-                                                    <h2>{{ group.group_name }}</h2>
-                                                </div>
-                                            </div>
-
-                                            <p class="modal-description">
-                                                {{ group.group_description|default('No troupe description yet.', true) }}
-                                            </p>
-
-                                            <div class="members-placeholder">
-                                                <h3>Members</h3>
-                                                {% if members_by_group.get(group.group_name) %}
-                                                    <div class="member-chip-row">
-                                                        {% for member in members_by_group.get(group.group_name) %}
-                                                            <span class="member-chip">{{ member.username }}</span>
-                                                        {% endfor %}
-                                                    </div>
-                                                {% else %}
-                                                    <p>Member profile cards will go here later.</p>
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="modal-actions">
-                                                <form 
-                                                    action="/leave_troupe" 
-                                                    method="POST" 
-                                                    class="leave-troupe-form"
-                                                    onsubmit="return confirm('Leave this troupe? You can rejoin later if you know the password.');"
-                                                >
-                                                    <input type="hidden" name="group_name" value="{{ group.group_name }}">
-
-                                                    <button type="submit" class="cute-btn danger-btn">
-                                                        Leave Troupe
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             {% endfor %}
                         {% else %}
@@ -417,6 +393,99 @@
             </aside>
         </main>
 
+
+        <!-- Troupe detail popups are outside the troupe scroll so they do not get clipped -->
+        {% if user_groups %}
+            {% for group in user_groups %}
+        <input type="checkbox" id="troupe-detail-toggle-{{ loop.index }}" class="modal-toggle troupe-modal-toggle">
+        <div class="modal-overlay troupe-detail-modal">
+            <div class="modal-card wide-modal">
+                <label for="troupe-detail-toggle-{{ loop.index }}" class="modal-close">×</label>
+
+                <div class="modal-title-row">
+                    <div class="modal-icon">
+                        {% if group.group_icon and '.png' in group.group_icon %}
+                            <img src="{{ url_for('static', filename='icons/' ~ group.group_icon) }}" alt="Troupe Icon">
+                        {% else %}
+                            {{ group.group_icon|default('🎩', true) }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="eyebrow">Troupe Details</p>
+                        <h2>{{ group.group_name }}</h2>
+                    </div>
+                </div>
+
+                <p class="modal-description">
+                    {{ group.group_description|default('No troupe description yet.', true) }}
+                </p>
+
+                <div class="members-placeholder">
+                    <h3>Members</h3>
+                    {% if members_by_group.get(group.group_name) %}
+                        <div class="member-chip-row">
+                            {% for member in members_by_group.get(group.group_name) %}
+                                <span class="member-chip">{{ member.username }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>Member profile cards will go here later.</p>
+                    {% endif %}
+                </div>
+
+                <div class="modal-actions">
+                    <label for="leave-troupe-confirm-{{ loop.index }}" class="cute-btn danger-btn">
+                        Leave Troupe
+                    </label>
+                </div>
+
+            </div>
+        </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Leave troupe confirmation popups are outside the troupe detail modal so they do not get clipped -->
+        {% if user_groups %}
+            {% for group in user_groups %}
+        <input type="checkbox" id="leave-troupe-confirm-{{ loop.index }}" class="modal-toggle confirm-modal-toggle">
+        <div class="modal-overlay furina-confirm-modal leave-confirm-modal">
+            <div class="modal-card notification-card confirm-card">
+                <label for="leave-troupe-confirm-{{ loop.index }}" class="modal-close">×</label>
+
+                <div class="notification-content">
+                    <img
+                        src="{{ url_for('static', filename='images/furina_crying.png') }}"
+                        alt="Crying Furina"
+                        class="notification-furina-img"
+                    >
+
+                    <div>
+                        <p class="eyebrow">Leaving the Stage?</p>
+                        <h2>Are you sure you want to leave?</h2>
+                        <p class="notification-text">
+                            You can still join back if you know the password.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-actions notification-actions">
+                    <label for="leave-troupe-confirm-{{ loop.index }}" class="cute-btn secondary-btn">
+                        Cancel
+                    </label>
+
+                    <form action="/leave_troupe" method="POST" class="leave-troupe-form confirm-inline-form">
+                        <input type="hidden" name="group_name" value="{{ group.group_name }}">
+                        <button type="submit" class="cute-btn danger-btn">
+                            Leave
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+        {% endif %}
+
+
         <!-- Task detail popups are outside the performance scroll so they do not get clipped -->
         {% if tasks %}
             {% for task in tasks %}
@@ -550,9 +619,46 @@
                             </div>
                         </form>
 
-                        <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form" onsubmit="return confirm('Delete this performance?');">
-                            <button type="submit" class="cute-btn danger-btn">Delete</button>
-                        </form>
+                        <div class="delete-task-form">
+                            <label for="delete-task-confirm-{{ task.task_id }}" class="cute-btn danger-btn">
+                                Delete
+                            </label>
+                        </div>
+
+                        <input type="checkbox" id="delete-task-confirm-{{ task.task_id }}" class="modal-toggle confirm-modal-toggle">
+                        <div class="modal-overlay furina-confirm-modal delete-confirm-modal">
+                            <div class="modal-card notification-card confirm-card">
+                                <label for="delete-task-confirm-{{ task.task_id }}" class="modal-close">×</label>
+
+                                <div class="notification-content">
+                                    <img
+                                        src="{{ url_for('static', filename='images/furina_shocked.png') }}"
+                                        alt="Shocked Furina"
+                                        class="notification-furina-img"
+                                    >
+
+                                    <div>
+                                        <p class="eyebrow">Dangerous Act</p>
+                                        <h2>Are you sure you want to delete this task?</h2>
+                                        <p class="notification-text">
+                                            This performance will disappear from the stage.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="modal-actions notification-actions">
+                                    <label for="delete-task-confirm-{{ task.task_id }}" class="cute-btn secondary-btn">
+                                        Cancel
+                                    </label>
+
+                                    <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form confirm-inline-form">
+                                        <button type="submit" class="cute-btn danger-btn">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 {% else %}
                     <p class="creator-note">Only the creator can edit the full performance details.</p>

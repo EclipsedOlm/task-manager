@@ -66,5 +66,37 @@
                 >
             </section>
         </main>
+
+
+        {% if auth_error %}
+            <!-- Furina styled auth warning popup -->
+            <div class="modal-overlay auth-notification-modal">
+                <div class="modal-card notification-card">
+                    <a href="/login" class="modal-close">×</a>
+
+                    <div class="notification-content">
+                        <img
+                            src="{{ url_for('static', filename='images/' ~ auth_image) }}"
+                            alt="Furina notification"
+                            class="notification-furina-img"
+                        >
+
+                        <div>
+                            <p class="eyebrow">Curtain Call!</p>
+                            <h2>{{ auth_error }}</h2>
+                            <p class="notification-text">
+                                Try again, performer. The stage is still waiting for you~
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions notification-actions">
+                        <a href="/login" class="cute-btn primary-action-btn">
+                            Try Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </body>
 </html>

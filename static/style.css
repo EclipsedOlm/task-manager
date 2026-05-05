@@ -1730,7 +1730,7 @@ nav {
 }
 
 .task-modal-toggle:checked + .task-detail-modal,
-.troupe-modal-toggle:checked + .troupe-card + .troupe-detail-modal {
+.troupe-modal-toggle:checked + .troupe-detail-modal {
   display: grid;
 }
 
@@ -1995,7 +1995,538 @@ nav {
   }
 }
 
+
+/* troupe detail modal size fix */
+
+.troupe-detail-modal {
+  position: fixed;
+  inset: 0;
+  place-items: start center;
+  padding: 130px 26px 30px;
+  overflow-y: auto;
+  z-index: 10020;
+}
+
+.troupe-detail-modal .modal-card.wide-modal {
+  width: min(720px, 92vw);
+  max-height: calc(100vh - 165px);
+  padding: 20px 22px 24px;
+}
+
+.troupe-detail-modal .modal-title-row {
+  margin-bottom: 8px;
+}
+
+.troupe-detail-modal .modal-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.troupe-detail-modal .modal-description {
+  margin: 12px 0 14px;
+  line-height: 1.45;
+}
+
+.troupe-detail-modal .members-placeholder {
+  margin-top: 12px;
+  padding: 15px;
+}
+
+@media (max-width: 760px) {
+  .troupe-detail-modal {
+    padding: 120px 14px 24px;
+  }
+
+  .troupe-detail-modal .modal-card.wide-modal {
+    width: min(560px, 94vw);
+    max-height: calc(100vh - 145px);
+  }
+}
+
 .leave-troupe-form,
 .delete-task-form {
   margin: 0;
+}
+
+/* Furina notification and confirmation popups */
+
+.auth-notification-modal {
+  display: grid;
+  z-index: 10070;
+}
+
+.furina-confirm-modal {
+  z-index: 10090;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(127, 220, 255, 0.13), transparent 35%),
+    rgba(1, 8, 18, 0.72);
+}
+
+.confirm-modal-toggle:checked + .furina-confirm-modal {
+  display: grid;
+}
+
+.notification-card {
+  width: min(620px, 92vw);
+  overflow: visible;
+  padding: 28px;
+  border: 1px solid rgba(245, 217, 139, 0.62);
+  box-shadow:
+    0 0 34px rgba(127, 220, 255, 0.28),
+    0 0 18px rgba(245, 217, 139, 0.14),
+    inset 0 0 30px rgba(255, 255, 255, 0.04);
+}
+
+.notification-card::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  border-radius: 22px;
+  border: 1px dashed rgba(127, 220, 255, 0.22);
+}
+
+.notification-content {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.notification-furina-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 18px rgba(127, 220, 255, 0.36))
+    drop-shadow(0 0 10px rgba(245, 217, 139, 0.22));
+  animation: notificationFloat 3.2s ease-in-out infinite;
+}
+
+.notification-card h2 {
+  margin: 4px 0 8px;
+  font-size: 27px;
+  line-height: 1.15;
+}
+
+.notification-text {
+  margin: 0;
+  color: var(--furina-muted);
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.notification-actions {
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+  justify-content: flex-end;
+}
+
+.notification-actions a {
+  text-decoration: none;
+}
+
+.confirm-inline-form {
+  margin: 0;
+}
+
+.confirm-card .danger-btn {
+  min-width: 92px;
+}
+
+.auth-notification-modal .modal-close,
+.furina-confirm-modal .modal-close {
+  text-decoration: none;
+  z-index: 2;
+}
+
+@keyframes notificationFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(1.5deg);
+  }
+}
+
+@media (max-width: 650px) {
+  .notification-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .notification-furina-img {
+    margin: 0 auto;
+    width: 128px;
+    height: 128px;
+  }
+
+  .notification-actions {
+    justify-content: center;
+  }
+}
+
+
+/* Frontend polish: custom cursor, ripple clicks, sparkles, and toast notifications */
+
+@media (pointer: fine) {
+  body.furina-custom-cursor,
+  body.furina-custom-cursor a,
+  body.furina-custom-cursor button,
+  body.furina-custom-cursor label,
+  body.furina-custom-cursor .cute-btn,
+  body.furina-custom-cursor .primary-btn,
+  body.furina-custom-cursor .performance-card,
+  body.furina-custom-cursor .troupe-card,
+  body.furina-custom-cursor .join-troupe-card,
+  body.furina-custom-cursor .icon-choice-card,
+  body.furina-custom-cursor .nav-user-profile {
+    cursor: none;
+  }
+
+  body.furina-custom-cursor input,
+  body.furina-custom-cursor textarea {
+    cursor: text;
+  }
+
+  body.furina-custom-cursor select,
+  body.furina-custom-cursor option {
+    cursor: auto;
+  }
+}
+
+.furina-cursor-dot,
+.furina-cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 200000;
+  will-change: transform;
+}
+
+.furina-cursor-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--furina-gold);
+  box-shadow:
+    0 0 10px rgba(245, 217, 139, 0.85),
+    0 0 18px rgba(127, 220, 255, 0.55);
+}
+
+.furina-cursor-ring {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(127, 220, 255, 0.72);
+  background: rgba(127, 220, 255, 0.06);
+  box-shadow: 0 0 16px rgba(127, 220, 255, 0.22);
+  transition:
+    width 0.18s ease,
+    height 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.furina-cursor-ring.is-clicking {
+  width: 42px;
+  height: 42px;
+  background: rgba(245, 217, 139, 0.12);
+  border-color: rgba(245, 217, 139, 0.9);
+}
+
+.furina-cursor-dot.is-clicking {
+  background: var(--furina-cyan);
+}
+
+.furina-ripple-ready {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.furina-ripple {
+  position: absolute;
+  z-index: 0;
+  border-radius: 999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.42), rgba(127, 220, 255, 0.22), transparent 68%);
+  transform: scale(0);
+  opacity: 0.82;
+  animation: furinaRipple 680ms ease-out forwards;
+}
+
+.furina-click-spark {
+  position: fixed;
+  z-index: 199999;
+  pointer-events: none;
+  color: var(--furina-gold);
+  font-size: 15px;
+  font-weight: 900;
+  text-shadow:
+    0 0 8px rgba(245, 217, 139, 0.75),
+    0 0 14px rgba(127, 220, 255, 0.45);
+  transform: translate(-50%, -50%) scale(0.55);
+  animation: furinaSparkFly 620ms ease-out forwards;
+}
+
+.furina-toast-stack {
+  position: fixed;
+  top: 104px;
+  right: 24px;
+  width: min(360px, calc(100vw - 32px));
+  display: grid;
+  gap: 12px;
+  z-index: 120000;
+  pointer-events: none;
+}
+
+.furina-toast {
+  position: relative;
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(127, 220, 255, 0.06)),
+    rgba(7, 21, 39, 0.94);
+  border: 1px solid rgba(127, 220, 255, 0.35);
+  box-shadow:
+    0 0 24px rgba(127, 220, 255, 0.18),
+    inset 0 0 18px rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(10px);
+  animation: toastEnter 0.42s ease both;
+}
+
+.furina-toast::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(245, 217, 139, 0.22), transparent 42%);
+  opacity: 0.75;
+}
+
+.furina-toast-icon {
+  position: relative;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: radial-gradient(circle at top, rgba(127, 220, 255, 0.36), rgba(22, 54, 91, 0.92));
+  border: 1px solid rgba(245, 217, 139, 0.42);
+  font-size: 18px;
+  animation: toastIconFloat 2.8s ease-in-out infinite;
+}
+
+.furina-toast-content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.furina-toast-title {
+  margin: 0;
+  color: var(--furina-white);
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.furina-toast-subtitle {
+  margin: 2px 0 0;
+  color: var(--furina-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.furina-toast-close {
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--furina-gold);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.furina-toast.success {
+  border-color: rgba(127, 220, 255, 0.52);
+}
+
+.furina-toast.error {
+  border-color: rgba(255, 139, 154, 0.52);
+}
+
+.furina-toast.error .furina-toast-icon {
+  background: radial-gradient(circle at top, rgba(255, 139, 154, 0.34), rgba(68, 25, 42, 0.92));
+}
+
+.furina-toast.info {
+  border-color: rgba(245, 217, 139, 0.52);
+}
+
+.furina-toast.is-leaving {
+  animation: toastLeave 0.32s ease forwards;
+}
+
+.is-submitting {
+  filter: brightness(1.04) saturate(1.08);
+  box-shadow: 0 0 22px rgba(127, 220, 255, 0.5);
+}
+
+@keyframes furinaRipple {
+  from {
+    transform: scale(0);
+    opacity: 0.72;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes furinaSparkFly {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.45) rotate(0deg);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(0.05) rotate(80deg);
+  }
+}
+
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateX(26px) translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+@keyframes toastLeave {
+  to {
+    opacity: 0;
+    transform: translateX(26px) translateY(-6px) scale(0.96);
+  }
+}
+
+@keyframes toastIconFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+@media (max-width: 650px) {
+  .furina-toast-stack {
+    top: 118px;
+    right: 14px;
+    left: 14px;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .furina-click-spark,
+  .furina-ripple,
+  .furina-cursor-ring,
+  .furina-cursor-dot {
+    display: none;
+  }
+
+  .furina-toast,
+  .furina-toast.is-leaving {
+    animation: none;
+  }
+}
+
+/* extra modal polish fixes */
+
+.modal-card .modal-close,
+.modal-card .modal-close.furina-ripple-ready {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  left: auto;
+  bottom: auto;
+  z-index: 10;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  line-height: 1;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+/* Make the ripple effect slightly more visible */
+.furina-ripple {
+  background: radial-gradient(
+    circle,
+    rgba(245, 217, 139, 0.62) 0%,
+    rgba(127, 220, 255, 0.46) 34%,
+    rgba(255, 255, 255, 0.22) 54%,
+    transparent 72%
+  );
+  opacity: 0.98;
+  mix-blend-mode: screen;
+  animation: furinaRipple 760ms ease-out forwards;
+}
+
+/* Warning modal created by interactions.js when leaving create forms */
+.furina-unsaved-confirm-modal {
+  display: grid;
+  z-index: 14000;
+}
+
+.unsaved-confirm-card {
+  width: min(650px, 92vw);
+}
+
+.unsaved-confirm-card .notification-content {
+  align-items: center;
+}
+
+.unsaved-confirm-card .notification-furina-img {
+  width: 145px;
+  height: 145px;
+}
+
+.unsaved-confirm-card .notification-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 650px) {
+  .unsaved-confirm-card .notification-actions {
+    justify-content: center;
+  }
 }

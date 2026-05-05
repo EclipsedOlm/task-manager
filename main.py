@@ -1,5 +1,5 @@
 # Imports: 
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify # Flask functionality
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash # Flask functionality
 from db_funcs import * # Database functionality
 
 app = Flask(__name__) # Create the Flask app
@@ -12,31 +12,32 @@ pfp_list = [
     "Furina_smiling.png",
     "Furina_directing.png",
     "Furina_teatime.png",
+
     "furina_icon_1.jpg",
     "furina_icon_2.jpg",
     "furina_icon_3.webp",
     "furina_icon_4.jpg",
-    "furina_icon_5.jpg",
-    "furina_icon_6.jpg",
-    "furina_icon_7.jpg",
-    "furina_icon_8.jpg",
-    "furina_icon_9.jpg",
-    "furina_icon_10.webp",
+    "furina_icon_5.png",
+    "furina_icon_6.png",
+    "furina_icon_7.png",
+    "furina_icon_8.png",
+    "furina_icon_9.png",
+    "furina_icon_10.png",
     "furina_icon_11.jpg",
-    "furina_icon_12.jpg",
-    "furina_icon_13.webp",
-    "furina_icon_14.jpg",
-    "furina_icon_15.jpg",
-    "furina_icon_16.jpg",
-    "furina_icon_17.webp",
+    "furina_icon_12.png",
+    "furina_icon_13.png",
+    "furina_icon_14.png",
+    "furina_icon_15.png",
+    "furina_icon_16.png",
+    "furina_icon_17.png",
     "furina_icon_18.webp",
-    "furina_icon_19.jpg",
-    "furina_icon_20.webp",
-    "furina_icon_21.jpg",
-    "furina_icon_22.jpg",
-    "furina_icon_23.jpg",
-    "furina_icon_24.webp",
-    "furina_icon_25.webp",
+    "furina_icon_19.png",
+    "furina_icon_20.png",
+    "furina_icon_21.png",
+    "furina_icon_22.png",
+    "furina_icon_23.png",
+    "furina_icon_24.png",
+    "furina_icon_25.png",
     "furina_icon_26.png",
     "furina_icon_27.png",
     "furina_icon_28.png",
@@ -126,17 +127,26 @@ def login():
         user_data = retrieveUser(username)
         if(len(user_data) == 0):
             # Logic for user not found
-            pass
+            return render_template(
+                "login.html",
+                auth_error="Furina doesn't recognize this password/username",
+                auth_image="furina_pw_wrong.png"
+            )
         else:
             # There should only be 1 record since usernames are unique in the db
             if(password == dict(user_data[0])["password"]):
                 # Logic for correct password and username
                 session["logged_in"] = True
                 session["username"] = username
+                flash("Welcome back to the stage!", "success")
                 return redirect(url_for("home"))
             else:
                 # Logic for wrong password
-                pass
+                return render_template(
+                    "login.html",
+                    auth_error="Furina doesn't recognize this password/username",
+                    auth_image="furina_pw_wrong.png"
+                )
     
     return render_template("login.html")
 
@@ -153,9 +163,15 @@ def register():
         if result == "success":
             session["logged_in"] = True
             session["username"] = username
+            flash("Account created. Welcome to the troupe!", "success")
             return redirect(url_for("home"))
         else:
-            return render_template("register.html", error="Username already exists.")
+            return render_template(
+                "register.html",
+                error="Username already exists.",
+                auth_error="Furina already knows someone with this name...",
+                auth_image="furina_user_exist.png"
+            )
 
     return render_template("register.html")
 
@@ -182,6 +198,11 @@ def create_troupe():
 
     if result == "success":
         addUserToGroup(username, group_name)
+        flash("Troupe successfully created!", "success")
+    elif result == "name_conflict":
+        flash("Furina already knows a troupe with this name.", "error")
+    else:
+        flash("Furina could not create this troupe.", "error")
 
     return redirect(url_for("home"))
 
@@ -198,12 +219,22 @@ def join_troupe():
     group_data = retrieveGroup(group_name)
 
     if len(group_data) == 0:
+        flash("Furina could not find this troupe.", "error")
         return redirect(url_for("home"))
 
     group = dict(group_data[0])
 
     if group_password == group.get("group_password", ""):
-        addUserToGroup(username, group_name)
+        result = addUserToGroup(username, group_name)
+
+        if result == "success":
+            flash("You joined the troupe successfully!", "success")
+        elif result == "already_in_group":
+            flash("You are already performing with this troupe.", "info")
+        else:
+            flash("Furina could not add you to this troupe.", "error")
+    else:
+        flash("Furina says the troupe password is wrong.", "error")
 
     return redirect(url_for("home"))
 
@@ -224,7 +255,7 @@ def add_performance():
     icon = request.form.get("performance_icon", "🎼")
     status = request.form.get("status", "Not Started")
 
-    insertTask(
+    result = insertTask(
         title,
         description,
         assigned_to,
@@ -235,6 +266,11 @@ def add_performance():
         icon,
         group_name
     )
+
+    if result == "success":
+        flash("Performance successfully created!", "success")
+    else:
+        flash("Furina could not create this performance.", "error")
 
     return redirect(url_for("home"))
 
@@ -250,19 +286,27 @@ def delete_task(task_id):
         task_data = getTaskInfo(task_id)
 
         if len(task_data) == 0:
+            flash("Furina could not find this performance.", "error")
             return redirect(url_for("home"))
 
         task = dict(task_data[0])
 
         # Only creator can delete the task
         if task["created_by"] != username:
+            flash("Only the creator can delete this performance.", "error")
             return redirect(url_for("home"))
 
-        deleteTask(task_id)
+        result = deleteTask(task_id)
+
+        if result == "success":
+            flash("Performance successfully deleted.", "success")
+        else:
+            flash("Furina could not delete this performance.", "error")
 
     except Exception as error:
         conn.rollback()
         print("delete_task failed:", error)
+        flash("Something went wrong while deleting this performance.", "error")
 
     return redirect(url_for("home"))
 
@@ -278,12 +322,14 @@ def edit_task(task_id):
         task_data = getTaskInfo(task_id)
 
         if len(task_data) == 0:
+            flash("Furina could not find this performance.", "error")
             return redirect(url_for("home"))
 
         task = dict(task_data[0])
 
         # Only the original creator is allowed to edit full task details
         if task["created_by"] != username:
+            flash("Only the creator can edit the full performance details.", "error")
             return redirect(url_for("home"))
 
         title = request.form["title"]
@@ -297,7 +343,7 @@ def edit_task(task_id):
 
         icon = request.form.get("performance_icon", "🎼")
 
-        editTask(
+        result = editTask(
             task_id,
             title,
             description,
@@ -309,9 +355,15 @@ def edit_task(task_id):
             icon
         )
 
+        if result == "success":
+            flash("Performance successfully edited!", "success")
+        else:
+            flash("Furina could not edit this performance.", "error")
+
     except Exception as error:
         conn.rollback()
         print("edit_task failed:", error)
+        flash("Something went wrong while editing this performance.", "error")
 
     return redirect(url_for("home"))
 
@@ -324,10 +376,16 @@ def update_task_status(task_id):
     status = request.form.get("status", "Not Started")
 
     try:
-        updateTaskStatus(task_id, status)
+        result = updateTaskStatus(task_id, status)
+
+        if result == "success":
+            flash("Performance status successfully updated!", "success")
+        else:
+            flash("Furina could not update this performance status.", "error")
     except Exception as error:
         conn.rollback()
         print("update_task_status failed:", error)
+        flash("Something went wrong while updating the status.", "error")
 
     return redirect(url_for("home"))
 
@@ -340,7 +398,12 @@ def update_profile_picture():
     username = session["username"]
     profile_picture = request.form.get("profile_picture", "None")
 
-    updateProfilePicture(username, profile_picture)
+    result = updateProfilePicture(username, profile_picture)
+
+    if result == "success":
+        flash("Profile picture successfully changed!", "success")
+    else:
+        flash("Furina could not change your profile picture.", "error")
 
     return redirect(url_for("home"))
 
@@ -387,10 +450,16 @@ def leave_troupe():
     group_name = request.form["group_name"]
 
     try:
-        removeUserFromGroup(username, group_name)
+        result = removeUserFromGroup(username, group_name)
+
+        if result == "success":
+            flash("You successfully left the troupe.", "success")
+        else:
+            flash("Furina could not remove you from this troupe.", "error")
     except Exception as error:
         conn.rollback()
         print("leave_troupe failed:", error)
+        flash("Something went wrong while leaving this troupe.", "error")
 
     return redirect(url_for("home"))
 
