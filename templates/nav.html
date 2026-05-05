@@ -30,10 +30,17 @@
             <label for="profile-picker-toggle" class="nav-user-profile">
                 <div class="nav-profile-pic">
                     {% if current_pfp and current_pfp != "None" %}
-                        <img 
-                            src="{{ url_for('static', filename='icons/' ~ current_pfp) }}" 
-                            alt="Profile Picture"
-                        >
+                        {% if "furina_icon_" in current_pfp %}
+                            <img 
+                                src="{{ url_for('static', filename='images/' ~ current_pfp) }}" 
+                                alt="Profile Picture"
+                            >
+                        {% else %}
+                            <img 
+                                src="{{ url_for('static', filename='icons/' ~ current_pfp) }}" 
+                                alt="Profile Picture"
+                            >
+                        {% endif %}
                     {% else %}
                         <span>{{ display_username[0]|upper }}</span>
                     {% endif %}
@@ -119,6 +126,426 @@
                                 alt="Furina Tea Time"
                             >
                             <span>Tea Time</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-1" 
+                            value="furina_icon_1.jpg"
+                            {% if current_pfp == "furina_icon_1.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-1" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_1.jpg') }}"
+                                alt="Furina 1"
+                            >
+                            <span>Furina 1</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-2" 
+                            value="furina_icon_2.jpg"
+                            {% if current_pfp == "furina_icon_2.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-2" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_2.jpg') }}"
+                                alt="Furina 2"
+                            >
+                            <span>Furina 2</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-3" 
+                            value="furina_icon_3.webp"
+                            {% if current_pfp == "furina_icon_3.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-3" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_3.webp') }}"
+                                alt="Furina 3"
+                            >
+                            <span>Furina 3</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-4" 
+                            value="furina_icon_4.jpg"
+                            {% if current_pfp == "furina_icon_4.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-4" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_4.jpg') }}"
+                                alt="Furina 4"
+                            >
+                            <span>Furina 4</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-5" 
+                            value="furina_icon_5.jpg"
+                            {% if current_pfp == "furina_icon_5.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-5" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_5.jpg') }}"
+                                alt="Furina 5"
+                            >
+                            <span>Furina 5</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-6" 
+                            value="furina_icon_6.jpg"
+                            {% if current_pfp == "furina_icon_6.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-6" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_6.jpg') }}"
+                                alt="Furina 6"
+                            >
+                            <span>Furina 6</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-7" 
+                            value="furina_icon_7.jpg"
+                            {% if current_pfp == "furina_icon_7.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-7" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_7.jpg') }}"
+                                alt="Furina 7"
+                            >
+                            <span>Furina 7</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-8" 
+                            value="furina_icon_8.jpg"
+                            {% if current_pfp == "furina_icon_8.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-8" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_8.jpg') }}"
+                                alt="Furina 8"
+                            >
+                            <span>Furina 8</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-9" 
+                            value="furina_icon_9.jpg"
+                            {% if current_pfp == "furina_icon_9.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-9" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_9.jpg') }}"
+                                alt="Furina 9"
+                            >
+                            <span>Furina 9</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-10" 
+                            value="furina_icon_10.webp"
+                            {% if current_pfp == "furina_icon_10.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-10" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_10.webp') }}"
+                                alt="Furina 10"
+                            >
+                            <span>Furina 10</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-11" 
+                            value="furina_icon_11.jpg"
+                            {% if current_pfp == "furina_icon_11.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-11" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_11.jpg') }}"
+                                alt="Furina 11"
+                            >
+                            <span>Furina 11</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-12" 
+                            value="furina_icon_12.jpg"
+                            {% if current_pfp == "furina_icon_12.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-12" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_12.jpg') }}"
+                                alt="Furina 12"
+                            >
+                            <span>Furina 12</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-13" 
+                            value="furina_icon_13.webp"
+                            {% if current_pfp == "furina_icon_13.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-13" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_13.webp') }}"
+                                alt="Furina 13"
+                            >
+                            <span>Furina 13</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-14" 
+                            value="furina_icon_14.jpg"
+                            {% if current_pfp == "furina_icon_14.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-14" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_14.jpg') }}"
+                                alt="Furina 14"
+                            >
+                            <span>Furina 14</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-15" 
+                            value="furina_icon_15.jpg"
+                            {% if current_pfp == "furina_icon_15.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-15" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_15.jpg') }}"
+                                alt="Furina 15"
+                            >
+                            <span>Furina 15</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-16" 
+                            value="furina_icon_16.jpg"
+                            {% if current_pfp == "furina_icon_16.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-16" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_16.jpg') }}"
+                                alt="Furina 16"
+                            >
+                            <span>Furina 16</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-17" 
+                            value="furina_icon_17.webp"
+                            {% if current_pfp == "furina_icon_17.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-17" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_17.webp') }}"
+                                alt="Furina 17"
+                            >
+                            <span>Furina 17</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-18" 
+                            value="furina_icon_18.webp"
+                            {% if current_pfp == "furina_icon_18.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-18" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_18.webp') }}"
+                                alt="Furina 18"
+                            >
+                            <span>Furina 18</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-19" 
+                            value="furina_icon_19.jpg"
+                            {% if current_pfp == "furina_icon_19.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-19" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_19.jpg') }}"
+                                alt="Furina 19"
+                            >
+                            <span>Furina 19</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-20" 
+                            value="furina_icon_20.webp"
+                            {% if current_pfp == "furina_icon_20.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-20" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_20.webp') }}"
+                                alt="Furina 20"
+                            >
+                            <span>Furina 20</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-21" 
+                            value="furina_icon_21.jpg"
+                            {% if current_pfp == "furina_icon_21.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-21" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_21.jpg') }}"
+                                alt="Furina 21"
+                            >
+                            <span>Furina 21</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-22" 
+                            value="furina_icon_22.jpg"
+                            {% if current_pfp == "furina_icon_22.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-22" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_22.jpg') }}"
+                                alt="Furina 22"
+                            >
+                            <span>Furina 22</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-23" 
+                            value="furina_icon_23.jpg"
+                            {% if current_pfp == "furina_icon_23.jpg" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-23" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_23.jpg') }}"
+                                alt="Furina 23"
+                            >
+                            <span>Furina 23</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-24" 
+                            value="furina_icon_24.webp"
+                            {% if current_pfp == "furina_icon_24.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-24" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_24.webp') }}"
+                                alt="Furina 24"
+                            >
+                            <span>Furina 24</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-25" 
+                            value="furina_icon_25.webp"
+                            {% if current_pfp == "furina_icon_25.webp" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-25" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_25.webp') }}"
+                                alt="Furina 25"
+                            >
+                            <span>Furina 25</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-26" 
+                            value="furina_icon_26.png"
+                            {% if current_pfp == "furina_icon_26.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-26" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_26.png') }}"
+                                alt="Furina 26"
+                            >
+                            <span>Furina 26</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-27" 
+                            value="furina_icon_27.png"
+                            {% if current_pfp == "furina_icon_27.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-27" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_27.png') }}"
+                                alt="Furina 27"
+                            >
+                            <span>Furina 27</span>
+                        </label>
+
+                        <input 
+                            type="radio" 
+                            name="profile_picture" 
+                            id="profile-icon-furina-28" 
+                            value="furina_icon_28.png"
+                            {% if current_pfp == "furina_icon_28.png" %}checked{% endif %}
+                        >
+                        <label for="profile-icon-furina-28" class="icon-choice-card profile-icon-choice">
+                            <img
+                                src="{{ url_for('static', filename='images/furina_icon_28.png') }}"
+                                alt="Furina 28"
+                            >
+                            <span>Furina 28</span>
                         </label>
                     </div>
 

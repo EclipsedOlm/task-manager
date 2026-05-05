@@ -11,7 +11,35 @@ pfp_list = [
     "None",
     "Furina_smiling.png",
     "Furina_directing.png",
-    "Furina_teatime.png"
+    "Furina_teatime.png",
+    "furina_icon_1.jpg",
+    "furina_icon_2.jpg",
+    "furina_icon_3.webp",
+    "furina_icon_4.jpg",
+    "furina_icon_5.jpg",
+    "furina_icon_6.jpg",
+    "furina_icon_7.jpg",
+    "furina_icon_8.jpg",
+    "furina_icon_9.jpg",
+    "furina_icon_10.webp",
+    "furina_icon_11.jpg",
+    "furina_icon_12.jpg",
+    "furina_icon_13.webp",
+    "furina_icon_14.jpg",
+    "furina_icon_15.jpg",
+    "furina_icon_16.jpg",
+    "furina_icon_17.webp",
+    "furina_icon_18.webp",
+    "furina_icon_19.jpg",
+    "furina_icon_20.webp",
+    "furina_icon_21.jpg",
+    "furina_icon_22.jpg",
+    "furina_icon_23.jpg",
+    "furina_icon_24.webp",
+    "furina_icon_25.webp",
+    "furina_icon_26.png",
+    "furina_icon_27.png",
+    "furina_icon_28.png",
 ]
 
 #This is an empty check to prevent crashes (there're prob better ways but im too lazy)
@@ -368,4 +396,4 @@ def leave_troupe():
 
 
 if __name__ == "__main__":
-  app.run()
+  app.run(port=5000)

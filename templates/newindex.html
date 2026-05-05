@@ -18,6 +18,31 @@
         <input type="checkbox" id="task-icon-picker-toggle" class="modal-toggle">
         <input type="checkbox" id="group-icon-picker-toggle" class="modal-toggle">
 
+        <style>
+            /* Make every task/troupe icon choice show the same selected effect, including newly added PNG icons */
+            .icon-picker-grid input[type="radio"]:checked + .icon-choice-card {
+                transform: translateY(-2px);
+                border-color: rgba(245, 217, 139, 0.82);
+                box-shadow:
+                    0 0 20px rgba(245, 217, 139, 0.22),
+                    0 0 16px rgba(127, 220, 255, 0.18);
+                background:
+                    linear-gradient(145deg, rgba(245, 217, 139, 0.18), rgba(127, 220, 255, 0.11)),
+                    rgba(7, 21, 39, 0.86);
+            }
+
+            .icon-picker-grid input[type="radio"]:checked + .icon-choice-card::after {
+                content: "Selected";
+                margin-top: 2px;
+                padding: 4px 9px;
+                border-radius: 999px;
+                background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
+                color: var(--furina-dark);
+                font-size: 11px;
+                font-weight: 900;
+            }
+        </style>
+
         <main class="dashboard-shell">
             <!-- This is the left side (so like anything thats not the viewport ig) -->
             <section class="dashboard-main">
@@ -265,7 +290,11 @@
                                                 </div>
                                             {% elif msg.profile_picture and msg.profile_picture != "None" %}
                                                 <div class="chat-avatar image-chat-avatar">
-                                                    <img src="{{ url_for('static', filename='icons/' ~ msg.profile_picture) }}" alt="{{ msg.username }} profile picture">
+                                                    {% if "furina_icon_" in msg.profile_picture %}
+                                                        <img src="{{ url_for('static', filename='images/' ~ msg.profile_picture) }}" alt="{{ msg.username }} profile picture">
+                                                    {% else %}
+                                                        <img src="{{ url_for('static', filename='icons/' ~ msg.profile_picture) }}" alt="{{ msg.username }} profile picture">
+                                                    {% endif %}
                                                 </div>
                                             {% else %}
                                                 <div class="chat-avatar">{{ msg.username[0]|upper }}</div>
@@ -280,7 +309,11 @@
                                         {% if msg.username == username %}
                                             {% if profile_picture and profile_picture != "None" %}
                                                 <div class="chat-avatar image-chat-avatar">
-                                                    <img src="{{ url_for('static', filename='icons/' ~ profile_picture) }}" alt="Your profile picture">
+                                                    {% if "furina_icon_" in profile_picture %}
+                                                        <img src="{{ url_for('static', filename='images/' ~ profile_picture) }}" alt="Your profile picture">
+                                                    {% else %}
+                                                        <img src="{{ url_for('static', filename='icons/' ~ profile_picture) }}" alt="Your profile picture">
+                                                    {% endif %}
                                                 </div>
                                             {% else %}
                                                 <div class="chat-avatar">{{ username[0]|upper }}</div>
@@ -498,6 +531,15 @@
                                 <option value="🎭" {% if task.icon == '🎭' %}selected{% endif %}>🎭 Mask</option>
                                 <option value="👑" {% if task.icon == '👑' %}selected{% endif %}>👑 Crown</option>
                                 <option value="Furina_smiling.png" {% if task.icon == 'Furina_smiling.png' %}selected{% endif %}>Furina Star</option>
+                                <option value="Archon_quest.png" {% if task.icon == 'Archon_quest.png' %}selected{% endif %}>Archon Quest</option>
+                                <option value="Clock.png" {% if task.icon == 'Clock.png' %}selected{% endif %}>Clock</option>
+                                <option value="Commission.png" {% if task.icon == 'Commission.png' %}selected{% endif %}>Commission</option>
+                                <option value="Fate.png" {% if task.icon == 'Fate.png' %}selected{% endif %}>Fate</option>
+                                <option value="Mora.png" {% if task.icon == 'Mora.png' %}selected{% endif %}>Mora</option>
+                                <option value="Primogem.png" {% if task.icon == 'Primogem.png' %}selected{% endif %}>Primogem</option>
+                                <option value="Quest1.png" {% if task.icon == 'Quest1.png' %}selected{% endif %}>Quest 1</option>
+                                <option value="Quest2.png" {% if task.icon == 'Quest2.png' %}selected{% endif %}>Quest 2</option>
+                                <option value="World_quest.png" {% if task.icon == 'World_quest.png' %}selected{% endif %}>World Quest</option>
                             </select>
 
                             <label>Deadline</label>
@@ -738,6 +780,87 @@
                         >
                         <span>Star</span>
                     </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-archon-quest" value="Archon_quest.png">
+                    <label for="perf-icon-archon-quest" class="icon-choice-card performance-icon-choice" data-icon="Archon_quest.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Archon_quest.png') }}"
+                            alt="Archon Quest"
+                        >
+                        <span>Archon Quest</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-clock" value="Clock.png">
+                    <label for="perf-icon-clock" class="icon-choice-card performance-icon-choice" data-icon="Clock.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Clock.png') }}"
+                            alt="Clock"
+                        >
+                        <span>Clock</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-commission" value="Commission.png">
+                    <label for="perf-icon-commission" class="icon-choice-card performance-icon-choice" data-icon="Commission.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Commission.png') }}"
+                            alt="Commission"
+                        >
+                        <span>Commission</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-fate" value="Fate.png">
+                    <label for="perf-icon-fate" class="icon-choice-card performance-icon-choice" data-icon="Fate.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Fate.png') }}"
+                            alt="Fate"
+                        >
+                        <span>Fate</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-mora" value="Mora.png">
+                    <label for="perf-icon-mora" class="icon-choice-card performance-icon-choice" data-icon="Mora.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Mora.png') }}"
+                            alt="Mora"
+                        >
+                        <span>Mora</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-primogem" value="Primogem.png">
+                    <label for="perf-icon-primogem" class="icon-choice-card performance-icon-choice" data-icon="Primogem.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Primogem.png') }}"
+                            alt="Primogem"
+                        >
+                        <span>Primogem</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-quest-1" value="Quest1.png">
+                    <label for="perf-icon-quest-1" class="icon-choice-card performance-icon-choice" data-icon="Quest1.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Quest1.png') }}"
+                            alt="Quest 1"
+                        >
+                        <span>Quest 1</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-quest-2" value="Quest2.png">
+                    <label for="perf-icon-quest-2" class="icon-choice-card performance-icon-choice" data-icon="Quest2.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Quest2.png') }}"
+                            alt="Quest 2"
+                        >
+                        <span>Quest 2</span>
+                    </label>
+
+                    <input type="radio" name="performance_icon_picker" id="perf-icon-world-quest" value="World_quest.png">
+                    <label for="perf-icon-world-quest" class="icon-choice-card performance-icon-choice" data-icon="World_quest.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/World_quest.png') }}"
+                            alt="World Quest"
+                        >
+                        <span>World Quest</span>
+                    </label>
                 </div>
 
                 <div class="modal-actions icon-picker-actions">
@@ -804,6 +927,87 @@
                             alt="Furina Star"
                         >
                         <span>Star</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-archon-quest" value="Archon_quest.png">
+                    <label for="group-icon-archon-quest" class="icon-choice-card group-icon-choice" data-icon="Archon_quest.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Archon_quest.png') }}"
+                            alt="Archon Quest"
+                        >
+                        <span>Archon Quest</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-clock" value="Clock.png">
+                    <label for="group-icon-clock" class="icon-choice-card group-icon-choice" data-icon="Clock.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Clock.png') }}"
+                            alt="Clock"
+                        >
+                        <span>Clock</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-commission" value="Commission.png">
+                    <label for="group-icon-commission" class="icon-choice-card group-icon-choice" data-icon="Commission.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Commission.png') }}"
+                            alt="Commission"
+                        >
+                        <span>Commission</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-fate" value="Fate.png">
+                    <label for="group-icon-fate" class="icon-choice-card group-icon-choice" data-icon="Fate.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Fate.png') }}"
+                            alt="Fate"
+                        >
+                        <span>Fate</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-mora" value="Mora.png">
+                    <label for="group-icon-mora" class="icon-choice-card group-icon-choice" data-icon="Mora.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Mora.png') }}"
+                            alt="Mora"
+                        >
+                        <span>Mora</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-primogem" value="Primogem.png">
+                    <label for="group-icon-primogem" class="icon-choice-card group-icon-choice" data-icon="Primogem.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Primogem.png') }}"
+                            alt="Primogem"
+                        >
+                        <span>Primogem</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-quest-1" value="Quest1.png">
+                    <label for="group-icon-quest-1" class="icon-choice-card group-icon-choice" data-icon="Quest1.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Quest1.png') }}"
+                            alt="Quest 1"
+                        >
+                        <span>Quest 1</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-quest-2" value="Quest2.png">
+                    <label for="group-icon-quest-2" class="icon-choice-card group-icon-choice" data-icon="Quest2.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/Quest2.png') }}"
+                            alt="Quest 2"
+                        >
+                        <span>Quest 2</span>
+                    </label>
+
+                    <input type="radio" name="group_icon_picker" id="group-icon-world-quest" value="World_quest.png">
+                    <label for="group-icon-world-quest" class="icon-choice-card group-icon-choice" data-icon="World_quest.png">
+                        <img
+                            src="{{ url_for('static', filename='icons/World_quest.png') }}"
+                            alt="World Quest"
+                        >
+                        <span>World Quest</span>
                     </label>
                 </div>
 
