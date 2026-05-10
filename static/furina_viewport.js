@@ -60,11 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return sequence.end - sequence.start + 1;
     }
 
-    function getFrameUrl(sequenceName, frameIndex) {
-        const sequence = sequences[sequenceName];
-        const frameNumber = sequence.start + frameIndex;
-        return `${BASE_PATH}/${sequence.folder}/${frameNumber}.jpg`;
-    }
+function getFrameUrl(sequenceName, frameIndex) {
+    const sequence = sequences[sequenceName];
+    const frameNumber = sequence.start + frameIndex;
+    const paddedFrameNumber = String(frameNumber).padStart(4, "0");
+
+    return `${BASE_PATH}/${sequence.folder}/${paddedFrameNumber}.jpg`;
+}
 
     function preloadSequence(sequenceName) {
         if (frameCache[sequenceName].length > 0) return;
