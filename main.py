@@ -96,6 +96,7 @@ def home():
     tasks = to_list(retrieveTasksForUser(username))
     chat_history = to_list(getChatHistory())
     profile_picture = check_profile_picture(getProfilePicture(username))
+    reset_furina_viewport = session.pop("reset_furina_viewport", False)
 
     members_by_group = {}
 
@@ -115,6 +116,7 @@ def home():
         tasks=tasks,
         chat_history=chat_history,
         profile_picture=profile_picture,
+        reset_furina_viewport=reset_furina_viewport,
         members_by_group=members_by_group
     )
 
@@ -138,6 +140,7 @@ def login():
                 # Logic for correct password and username
                 session["logged_in"] = True
                 session["username"] = username
+                session["reset_furina_viewport"] = True
                 flash("Welcome back to the stage!", "success")
                 return redirect(url_for("home"))
             else:
@@ -163,6 +166,7 @@ def register():
         if result == "success":
             session["logged_in"] = True
             session["username"] = username
+            session["reset_furina_viewport"] = True
             flash("Account created. Welcome to the troupe!", "success")
             return redirect(url_for("home"))
         else:

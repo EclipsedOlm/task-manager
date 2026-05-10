@@ -2530,3 +2530,183 @@ nav {
     justify-content: center;
   }
 }
+
+/* Furina viewport interactive model */
+
+.furina-viewport {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+}
+
+.furina-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 26px;
+}
+
+.furina-stage::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 28px;
+  border: 1px dashed rgba(127, 220, 255, 0.16);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.furina-viewport-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  filter: drop-shadow(0 0 24px rgba(127, 220, 255, 0.18));
+  z-index: 1;
+}
+
+.furina-viewport-media.is-visible {
+  opacity: 1;
+}
+
+.furina-viewport-frame {
+  image-rendering: auto;
+}
+
+.furina-summon-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  color: var(--furina-muted);
+  background:
+    radial-gradient(circle at center, rgba(127, 220, 255, 0.14), transparent 44%),
+    rgba(7, 21, 39, 0.22);
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+}
+
+.furina-summon-layer.is-hidden {
+  opacity: 0;
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+.furina-summon-layer h2 {
+  margin: 8px 0 6px;
+  color: var(--furina-white);
+  font-size: 30px;
+  text-shadow: 0 0 18px rgba(127, 220, 255, 0.36);
+}
+
+.furina-summon-layer p {
+  margin: 0;
+  font-weight: 800;
+}
+
+.furina-summon-sparkle {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--furina-gold);
+  font-size: 52px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(245, 217, 139, 0.28);
+  box-shadow:
+    0 0 24px rgba(245, 217, 139, 0.18),
+    inset 0 0 20px rgba(127, 220, 255, 0.06);
+  animation: sparkleFloat 3.5s ease-in-out infinite;
+}
+
+.furina-viewport-loading,
+.furina-viewport-status {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.furina-viewport-loading {
+  bottom: 28px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--furina-dark);
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--furina-gold), var(--furina-cyan));
+  box-shadow: 0 0 18px rgba(127, 220, 255, 0.24);
+  transform: translateY(8px);
+}
+
+.furina-viewport-loading.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.furina-viewport-status {
+  top: 22px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 34px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--furina-muted);
+  font-size: 13px;
+  font-weight: 900;
+  background: rgba(7, 21, 39, 0.46);
+  border: 1px solid rgba(127, 220, 255, 0.18);
+  backdrop-filter: blur(6px);
+  transform: translateY(-8px);
+}
+
+.furina-viewport-status.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.furina-viewport.is-awake {
+  box-shadow:
+    0 0 30px rgba(127, 220, 255, 0.2),
+    0 0 18px rgba(245, 217, 139, 0.09),
+    inset 0 0 28px rgba(255, 255, 255, 0.03);
+}
+
+.furina-viewport.is-sleeping {
+  box-shadow:
+    0 0 22px rgba(127, 220, 255, 0.1),
+    inset 0 0 34px rgba(7, 21, 39, 0.36);
+}
+
+.furina-viewport.is-playful {
+  box-shadow:
+    0 0 34px rgba(245, 217, 139, 0.16),
+    0 0 22px rgba(127, 220, 255, 0.15),
+    inset 0 0 28px rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 1100px) {
+  .furina-stage {
+    min-height: 360px;
+  }
+}

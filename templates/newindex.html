@@ -327,14 +327,42 @@
 
             <!-- This for my Furina viewport still wip -->
             <aside class="furina-sidebar">
-                <section class="furina-viewport">
-                    <div class="furina-placeholder">
-                        <div class="furina-placeholder-icon">✨</div>
-                        <h2>Furina Viewport</h2>
-                        <p>Animation placeholder</p>
-                        <p class="furina-line">
-                            “The audience is watching. Let us make this performance magnificent!”
-                        </p>
+                <section
+                    class="furina-viewport"
+                    id="furina-viewport"
+                    data-reset-viewport="{{ 'true' if reset_furina_viewport else 'false' }}"
+                    aria-label="Interactive Furina viewport"
+                >
+                    <div class="furina-stage" id="furina-stage">
+                        <video
+                            id="furina-viewport-video"
+                            class="furina-viewport-media furina-viewport-video"
+                            muted
+                            playsinline
+                            preload="auto"
+                        ></video>
+
+                        <img
+                            id="furina-viewport-frame"
+                            class="furina-viewport-media furina-viewport-frame"
+                            src=""
+                            alt="Furina looking around"
+                            draggable="false"
+                        >
+
+                        <div class="furina-summon-layer" id="furina-summon-layer">
+                            <div class="furina-summon-sparkle">✦</div>
+                            <h2>Click to summon Furina</h2>
+                            <p>The stage is quiet... for now.</p>
+                        </div>
+
+                        <div class="furina-viewport-loading" id="furina-viewport-loading">
+                            Preparing the stage...
+                        </div>
+
+                        <div class="furina-viewport-status" id="furina-viewport-status">
+                            Furina is watching the stage.
+                        </div>
                     </div>
                 </section>
 
@@ -625,40 +653,6 @@
                             </label>
                         </div>
 
-                        <input type="checkbox" id="delete-task-confirm-{{ task.task_id }}" class="modal-toggle confirm-modal-toggle">
-                        <div class="modal-overlay furina-confirm-modal delete-confirm-modal">
-                            <div class="modal-card notification-card confirm-card">
-                                <label for="delete-task-confirm-{{ task.task_id }}" class="modal-close">×</label>
-
-                                <div class="notification-content">
-                                    <img
-                                        src="{{ url_for('static', filename='images/furina_shocked.png') }}"
-                                        alt="Shocked Furina"
-                                        class="notification-furina-img"
-                                    >
-
-                                    <div>
-                                        <p class="eyebrow">Dangerous Act</p>
-                                        <h2>Are you sure you want to delete this task?</h2>
-                                        <p class="notification-text">
-                                            This performance will disappear from the stage.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="modal-actions notification-actions">
-                                    <label for="delete-task-confirm-{{ task.task_id }}" class="cute-btn secondary-btn">
-                                        Cancel
-                                    </label>
-
-                                    <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form confirm-inline-form">
-                                        <button type="submit" class="cute-btn danger-btn">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 {% else %}
                     <p class="creator-note">Only the creator can edit the full performance details.</p>
@@ -667,6 +661,49 @@
         </div>
             {% endfor %}
         {% endif %}
+
+        <!-- Delete task confirmation popups are outside the task detail modal so they do not get clipped -->
+        {% if tasks %}
+            {% for task in tasks %}
+                {% if task.created_by == username %}
+        <input type="checkbox" id="delete-task-confirm-{{ task.task_id }}" class="modal-toggle confirm-modal-toggle">
+        <div class="modal-overlay furina-confirm-modal delete-confirm-modal">
+            <div class="modal-card notification-card confirm-card">
+                <label for="delete-task-confirm-{{ task.task_id }}" class="modal-close">×</label>
+
+                <div class="notification-content">
+                    <img
+                        src="{{ url_for('static', filename='images/furina_shocked.png') }}"
+                        alt="Shocked Furina"
+                        class="notification-furina-img"
+                    >
+
+                    <div>
+                        <p class="eyebrow">Dangerous Act</p>
+                        <h2>Are you sure you want to delete this task?</h2>
+                        <p class="notification-text">
+                            This performance will disappear from the stage.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modal-actions notification-actions">
+                    <label for="delete-task-confirm-{{ task.task_id }}" class="cute-btn secondary-btn">
+                        Cancel
+                    </label>
+
+                    <form action="/delete_task/{{ task.task_id }}" method="POST" class="delete-task-form confirm-inline-form">
+                        <button type="submit" class="cute-btn danger-btn">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
 
         <!-- Add performance popup -->
         <div class="modal-overlay add-performance-modal">
