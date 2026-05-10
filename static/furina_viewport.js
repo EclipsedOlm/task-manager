@@ -13,16 +13,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const STORAGE_KEY = "furinaViewportState_v1";
     const BASE_PATH = "/static/viewport";
 
-    const videoFiles = {
-        starting: `${BASE_PATH}/furina_starting.MKV`,
-        defaultTrans: `${BASE_PATH}/furina_default_trans.MKV`,
-        defaultInteract: `${BASE_PATH}/furina_default_interact.MKV`,
-        sleepTrans: `${BASE_PATH}/furina_sleep_trans.MKV`,
-        sleepLoop: `${BASE_PATH}/furina_sleep_loop.MKV`,
-        sleepRecovery: `${BASE_PATH}/furina_sleep_recovery.MKV`,
-        playfulTrans: `${BASE_PATH}/furina_playful_trans.MKV`,
-        playfulRecovery: `${BASE_PATH}/furina_playful_recovery.MKV`
-    };
+const videoFiles = {
+    starting: `${BASE_PATH}/furina_starting.mp4`,
+    defaultTrans: `${BASE_PATH}/furina_default_trans.mp4`,
+    defaultInteract: `${BASE_PATH}/furina_default_interact.mp4`,
+    sleepTrans: `${BASE_PATH}/furina_sleep_trans.mp4`,
+    sleepLoop: `${BASE_PATH}/furina_sleep_loop.mp4`,
+    sleepRecovery: `${BASE_PATH}/furina_sleep_recovery.mp4`,
+    playfulTrans: `${BASE_PATH}/furina_playful_trans.mp4`,
+    playfulRecovery: `${BASE_PATH}/furina_playful_recovery.mp4`
+};
 
     const sequences = {
         default: {
